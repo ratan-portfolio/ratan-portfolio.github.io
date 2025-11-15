@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ratan Mandal — 3D Premium Portfolio</title>
+  <!-- THREE.JS and GSAP from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    :root{
+      --bg:#0b1020; --card:#0f1724; --accent:#7c5cff; --muted:#97a0b9;
+      --glass: rgba(255,255,255,0.04);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#e6f0ff}
+
+    /* full-screen 3D canvas background */
+    #bgCanvas{position:fixed;inset:0;z-index:0}
+
+    /* Page layout */
+    header{position:relative;z-index:5;padding:20px 6%;display:flex;align-items:center;justify-content:space-between}
+    .logo{font-weight:700;font-size:20px;letter-spacing:0.6px}
+    nav a{color:var(--muted);margin-left:18px;text-decoration:none;font-weight:600}
+    nav a:hover{color:var(--accent)}
+
+    main{position:relative;z-index:2;padding:60px 6%;min-height:100vh;display:grid;grid-template-columns:1fr 420px;gap:40px;align-items:center}
+
+    /* left column - hero */
+    .hero h1{font-size:48px;line-height:1.02;margin-bottom:12px}
+    .hero p{color:var(--muted);font-size:18px;margin-bottom:18px}
+    .cta{display:flex;gap:12px}
+    .btn{background:linear-gradient(90deg,var(--accent),#4ad0ff);border:none;padding:12px 18px;border-radius:10px;color:#021028;font-weight:700;cursor:pointer}
+
+    /* right column - profile card */
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));padding:22px;border-radius:14px;backdrop-filter: blur(8px);box-shadow:0 6px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.04)}
+    .avatar{width:100%;height:220px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,var(--accent),#2dd4bf);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700}
+    .meta{margin-top:14px}
+    .meta .title{font-weight:700;font-size:18px}
+    .meta .sub{color:var(--muted);font-size:14px}
+
+    /* sections */
+    section{padding:80px 6%;}
+    .section-head{display:flex;align-items:center;gap:16px;margin-bottom:22px}
+    .section-head h2{font-size:28px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+
+    .skill{background:var(--card);padding:16px;border-radius:10px}
+    .project{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:10px}
+
+    footer{padding:40px 6%;text-align:center;color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:980px){main{grid-template-columns:1fr;gap:24px;padding-top:120px} .avatar{height:180px} }
+
+    /* small helper styles to make editing easy */
+    .editable{outline:2px dashed transparent}
+    .editable:focus{outline:2px dashed rgba(124,92,255,0.6);outline-offset:4px}
+
+    /* floating mini toolbar to explain editing */
+    .hint{position:fixed;left:16px;bottom:16px;background:var(--glass);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);z-index:6;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <!-- 3D Canvas Background -->
+  <canvas id="bgCanvas"></canvas>
+
+  <header>
+    <div class="logo">Ratan Mandal</div>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO / Left -->
+    <div class="hero">
+      <div>
+        <!-- Editable name/title - change text directly in HTML -->
+        <h1 contenteditable="true" class="editable" id="hero-name">Hi, I'm <span style="color:var(--accent)">Ratan Mandal</span></h1>
+        <p contenteditable="true" class="editable" id="hero-desc">I build interactive, 3D-enhanced experiences and beautiful interfaces. Front-end developer • UI/UX • WebGL explorer</p>
+
+        <div class="cta">
+          <button class="btn" id="btn-projects">See Projects</button>
+          <button class="btn" id="btn-contact">Hire Me</button>
+        </div>
+
+        <!-- quick highlights -->
+        <div style="margin-top:20px;color:var(--muted)">
+          <span style="margin-right:18px">⭐ Open to work</span>
+          <span>🧭 Based in India</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE CARD / Right -->
+    <aside class="card">
+      <div class="avatar" id="avatar">RM</div>
+      <div class="meta">
+        <div class="title" contenteditable="true" id="meta-title">Ratan Mandal</div>
+        <div class="sub" contenteditable="true" id="meta-sub">Front-End Developer • UI Designer</div>
+      </div>
+
+      <div style="margin-top:14px;color:var(--muted)">
+        <div><strong>Location:</strong> <span contenteditable="true" class="editable" id="meta-loc">India</span></div>
+        <div><strong>Email:</strong> <span contenteditable="true" class="editable" id="meta-email">ratan@example.com</span></div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <a href="#" style="text-decoration:none;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:700">GitHub</a>
+          <a href="#" style="text-decoration:none;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:700">LinkedIn</a>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-head">
+      <h2 contenteditable="true" class="editable">About</h2>
+    </div>
+    <p contenteditable="true" class="editable" id="about-text">I'm a designer-developer who enjoys crafting buttery smooth UI and tiny delightful animations. I love experimenting with WebGL, Three.js and motion systems to create memorable web experiences.</p>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-head"><h2 contenteditable="true" class="editable">Skills</h2></div>
+    <div class="grid">
+      <div class="skill" contenteditable="true">HTML &amp; CSS</div>
+      <div class="skill" contenteditable="true">JavaScript (ES6+)</div>
+      <div class="skill" contenteditable="true">React &amp; Vite</div>
+      <div class="skill" contenteditable="true">Three.js / WebGL</div>
+      <div class="skill" contenteditable="true">UI / UX Design</div>
+      <div class="skill" contenteditable="true">Git &amp; GitHub</div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-head"><h2 contenteditable="true" class="editable">Projects</h2></div>
+    <div class="grid">
+      <div class="project" contenteditable="true">
+        <h3>3D Landing — Interactive</h3>
+        <p>WebGL landing with 3D particles and custom shader-driven neon look. Click to view live demo.</p>
+      </div>
+      <div class="project" contenteditable="true">
+        <h3>Design System</h3>
+        <p>Reusable components, tokens and responsive patterns for fast UI development.</p>
+      </div>
+      <div class="project" contenteditable="true">
+        <h3>Portfolio Site</h3>
+        <p>Case studies, animations and micro-interactions with GSAP &amp; Three.js.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-head"><h2 contenteditable="true" class="editable">Contact</h2></div>
+    <div class="card" style="max-width:720px;margin:0 auto">
+      <form id="contact-form">
+        <div style="display:flex;gap:12px;margin-bottom:10px">
+          <input id="cname" placeholder="Your name" style="flex:1;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit" />
+          <input id="cemail" placeholder="Your email" style="flex:1;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit" />
+        </div>
+        <textarea id="cmsg" placeholder="Message" style="width:100%;height:120px;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit"></textarea>
+        <div style="text-align:right;margin-top:12px"><button class="btn" type="button" id="sendBtn">Send Message</button></div>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> Ratan Mandal — Built with ❤️
+  </footer>
+
+  <div class="hint">Tip: Click on any text (it is editable). After editing, save this file and upload to your GitHub repo.</div>
+
+  <script>
+    // === Simple Three.js animated background (particles + rotating 3D torus) ===
+    const canvas = document.getElementById('bgCanvas');
+    const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+    renderer.setPixelRatio(window.devicePixelRatio); renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.set(0,0,60);
+
+    // lights
+    const fill = new THREE.DirectionalLight(0xffffff, 0.9); fill.position.set(5,10,7); scene.add(fill);
+    const amb = new THREE.AmbientLight(0x40475a,0.6); scene.add(amb);
+
+    // torus
+    const torusGeo = new THREE.TorusKnotGeometry(10,2.8,150,16);
+    const torusMat = new THREE.MeshStandardMaterial({
+      metalness:0.6, roughness:0.2, emissive:0x1a1530, emissiveIntensity:0.9
+    });
+    const torus = new THREE.Mesh(torusGeo, torusMat); scene.add(torus);
+
+    // particle system
+    const particlesGeo = new THREE.BufferGeometry();
+    const count = 1200;
+    const positions = new Float32Array(count * 3);
+    for(let i=0;i<count;i++){
+      positions[i*3] = (Math.random()-0.5) * 200;
+      positions[i*3+1] = (Math.random()-0.5) * 200;
+      positions[i*3+2] = (Math.random()-0.5) * 200;
+    }
+    particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+    const particlesMat = new THREE.PointsMaterial({size:0.9, color:0xb7a7ff, transparent:true, opacity:0.85});
+    const points = new THREE.Points(particlesGeo, particlesMat); scene.add(points);
+
+    // resize
+    window.addEventListener('resize', ()=>{renderer.setSize(window.innerWidth, window.innerHeight); camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();});
+
+    // simple parallax using mouse
+    let mouseX=0, mouseY=0; document.addEventListener('mousemove', (e)=>{mouseX = (e.clientX - window.innerWidth/2)/100; mouseY = (e.clientY - window.innerHeight/2)/100});
+
+    // animation loop
+    const clock = new THREE.Clock();
+    function animate(){
+      const t = clock.getElapsedTime();
+      torus.rotation.x += 0.005 + Math.sin(t*0.5)*0.002;
+      torus.rotation.y += 0.006;
+      torus.position.x += (mouseX - torus.position.x) * 0.03;
+      torus.position.y += (-mouseY - torus.position.y) * 0.03;
+
+      points.rotation.y += 0.0008;
+      renderer.render(scene,camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // subtle entrance animations using GSAP
+    gsap.from('.card', {duration:1, y:20, opacity:0, stagger:0.08, ease:'power2.out'});
+    gsap.from('#hero-name', {duration:1.2, y:30, opacity:0, delay:0.15, ease:'power3.out'});
+
+    // button anchors
+    document.getElementById('btn-projects').addEventListener('click', ()=>{document.getElementById('projects').scrollIntoView({behavior:'smooth'})});
+    document.getElementById('btn-contact').addEventListener('click', ()=>{document.getElementById('contact').scrollIntoView({behavior:'smooth'})});
+
+    // contact (local demo: show success toast)
+    document.getElementById('sendBtn').addEventListener('click', ()=>{
+      const name = document.getElementById('cname').value.trim();
+      if(!name){alert('Please enter your name'); return}
+      alert('Thanks '+name+" — message sent (demo). Update this form to connect to an email backend or use Formspree).")
+    });
+
+    // set year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Accessibility: allow Enter key to submit demo
+    document.getElementById('contact-form').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('sendBtn').click(); } });
+
+    // ---- Helpful notes for editing the file (visible only in source):
+    // 1) Change your name at #hero-name and #meta-title. Avatar initials at #avatar.
+    // 2) Edit project cards inside #projects section. They are contenteditable already.
+    // 3) To publish: save this file as index.html and upload to a repo named ratanmandal.github.io OR upload to any repo and enable GitHub Pages from settings.
+    // 4) For custom domain or more pages, split into folders and add assets (images) alongside index.html.
+  </script>
+</body>
+</html>
