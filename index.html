@@ -3,51 +3,67 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ratan Mandal — 3D Editable Portfolio</title>
-  <!-- THREE.JS and GSAP -->
+  <title>Ratan Mandal — 3D Premium Portfolio</title>
+  <!-- THREE.JS and GSAP from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/examples/js/controls/OrbitControls.js"></script>
   <style>
-    :root{--bg:#0b1020;--card:#0f1724;--accent:#7c5cff;--muted:#97a0b9;--glass:rgba(255,255,255,0.04)}
+    :root{
+      --bg:#0b1020; --card:#0f1724; --accent:#7c5cff; --muted:#97a0b9;
+      --glass: rgba(255,255,255,0.04);
+    }
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui, -apple-system, 'Segoe UI', Roboto, Arial;color:#e6f0ff;background:var(--bg)}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#e6f0ff}
+
+    /* full-screen 3D canvas background */
     #bgCanvas{position:fixed;inset:0;z-index:0}
-    header{position:relative;z-index:3;padding:20px 6%;display:flex;align-items:center;justify-content:space-between}
-    .logo{font-weight:700;font-size:20px}
+
+    /* Page layout */
+    header{position:relative;z-index:5;padding:20px 6%;display:flex;align-items:center;justify-content:space-between}
+    .logo{font-weight:700;font-size:20px;letter-spacing:0.6px}
     nav a{color:var(--muted);margin-left:18px;text-decoration:none;font-weight:600}
     nav a:hover{color:var(--accent)}
+
     main{position:relative;z-index:2;padding:60px 6%;min-height:100vh;display:grid;grid-template-columns:1fr 420px;gap:40px;align-items:center}
+
+    /* left column - hero */
     .hero h1{font-size:48px;line-height:1.02;margin-bottom:12px}
     .hero p{color:var(--muted);font-size:18px;margin-bottom:18px}
     .cta{display:flex;gap:12px}
     .btn{background:linear-gradient(90deg,var(--accent),#4ad0ff);border:none;padding:12px 18px;border-radius:10px;color:#021028;font-weight:700;cursor:pointer}
+
+    /* right column - profile card */
     .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));padding:22px;border-radius:14px;backdrop-filter: blur(8px);box-shadow:0 6px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.04)}
     .avatar{width:100%;height:220px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,var(--accent),#2dd4bf);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700}
-    section{padding:80px 6%}
+    .meta{margin-top:14px}
+    .meta .title{font-weight:700;font-size:18px}
+    .meta .sub{color:var(--muted);font-size:14px}
+
+    /* sections */
+    section{padding:80px 6%;}
     .section-head{display:flex;align-items:center;gap:16px;margin-bottom:22px}
+    .section-head h2{font-size:28px}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+
     .skill{background:var(--card);padding:16px;border-radius:10px}
     .project{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:10px}
+
     footer{padding:40px 6%;text-align:center;color:var(--muted)}
-    @media (max-width:980px){main{grid-template-columns:1fr;gap:24px;padding-top:120px}.avatar{height:180px}}
 
-    /* EDITOR UI */
-    .editor-bar{position:fixed;right:18px;top:80px;width:320px;background:rgba(5,7,15,0.85);backdrop-filter:blur(8px);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);z-index:999;color:var(--muted);display:none}
-    .editor-bar h4{margin:6px 0 8px;font-size:15px;color:#fff}
-    .editor-bar label{font-size:13px;color:var(--muted);display:block;margin-top:8px}
-    .editor-bar input[type="text"],.editor-bar input[type="color"],.editor-bar input[type="url"],.editor-bar select{width:100%;padding:8px;border-radius:6px;border:none;margin-top:6px;background:rgba(255,255,255,0.03);color:inherit}
-    .editor-bar button{margin-top:10px;padding:8px 10px;border-radius:8px;border:none;cursor:pointer;background:var(--accent);color:#021028;font-weight:700}
-    .selected-outline{box-shadow:0 0 0 3px rgba(124,92,255,0.18) !important}
+    /* Responsive */
+    @media (max-width:980px){main{grid-template-columns:1fr;gap:24px;padding-top:120px} .avatar{height:180px} }
+
+    /* small helper styles to make editing easy */
+    .editable{outline:2px dashed transparent}
+    .editable:focus{outline:2px dashed rgba(124,92,255,0.6);outline-offset:4px}
+
+    /* floating mini toolbar to explain editing */
     .hint{position:fixed;left:16px;bottom:16px;background:var(--glass);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);z-index:6;color:var(--muted);font-size:13px}
-
-    /* password modal */
-    .pw-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:1000}
-    .pw-box{background:#071024;padding:18px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);width:360px}
-    .pw-box input{width:100%;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit}
-    .pw-box button{margin-top:10px;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#021028;font-weight:700}
   </style>
 </head>
 <body>
+  <!-- 3D Canvas Background -->
   <canvas id="bgCanvas"></canvas>
 
   <header>
@@ -61,14 +77,19 @@
   </header>
 
   <main>
+    <!-- HERO / Left -->
     <div class="hero">
       <div>
-        <h1 id="hero-name">Hi, I'm <span style="color:var(--accent)">Ratan Mandal</span></h1>
-        <p id="hero-desc">I build interactive, 3D-enhanced experiences and beautiful interfaces. Front-end developer • UI/UX • WebGL explorer</p>
+        <!-- Editable name/title - change text directly in HTML -->
+        <h1 contenteditable="true" class="editable" id="hero-name">Hi, I'm <span style="color:var(--accent)">Ratan Mandal</span></h1>
+        <p contenteditable="true" class="editable" id="hero-desc">I build interactive, 3D-enhanced experiences and beautiful interfaces. Front-end developer • UI/UX • WebGL explorer</p>
+
         <div class="cta">
           <button class="btn" id="btn-projects">See Projects</button>
           <button class="btn" id="btn-contact">Hire Me</button>
         </div>
+
+        <!-- quick highlights -->
         <div style="margin-top:20px;color:var(--muted)">
           <span style="margin-right:18px">⭐ Open to work</span>
           <span>🧭 Based in India</span>
@@ -76,59 +97,75 @@
       </div>
     </div>
 
+    <!-- PROFILE CARD / Right -->
     <aside class="card">
       <div class="avatar" id="avatar">RM</div>
       <div class="meta">
-        <div class="title" id="meta-title">Ratan Mandal</div>
-        <div class="sub" id="meta-sub">Front-End Developer • UI Designer</div>
+        <div class="title" contenteditable="true" id="meta-title">Ratan Mandal</div>
+        <div class="sub" contenteditable="true" id="meta-sub">Front-End Developer • UI Designer</div>
       </div>
 
       <div style="margin-top:14px;color:var(--muted)">
-        <div><strong>Location:</strong> <span id="meta-loc">India</span></div>
-        <div><strong>Email:</strong> <span id="meta-email">ratan@example.com</span></div>
+        <div><strong>Location:</strong> <span contenteditable="true" class="editable" id="meta-loc">India</span></div>
+        <div><strong>Email:</strong> <span contenteditable="true" class="editable" id="meta-email">ratan@example.com</span></div>
         <div style="margin-top:10px;display:flex;gap:8px">
-          <a id="link-github" href="#" style="text-decoration:none;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:700">GitHub</a>
-          <a id="link-linkedin" href="#" style="text-decoration:none;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:700">LinkedIn</a>
+          <a href="#" style="text-decoration:none;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:700">GitHub</a>
+          <a href="#" style="text-decoration:none;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:700">LinkedIn</a>
         </div>
       </div>
     </aside>
   </main>
 
+  <!-- ABOUT -->
   <section id="about">
-    <div class="section-head"><h2 id="about-title">About</h2></div>
-    <p id="about-text">I'm a designer-developer who enjoys crafting buttery smooth UI and tiny delightful animations. I love experimenting with WebGL, Three.js and motion systems to create memorable web experiences.</p>
+    <div class="section-head">
+      <h2 contenteditable="true" class="editable">About</h2>
+    </div>
+    <p contenteditable="true" class="editable" id="about-text">I'm a designer-developer who enjoys crafting buttery smooth UI and tiny delightful animations. I love experimenting with WebGL, Three.js and motion systems to create memorable web experiences.</p>
   </section>
 
+  <!-- SKILLS -->
   <section id="skills">
-    <div class="section-head"><h2 id="skills-title">Skills</h2></div>
-    <div class="grid" id="skills-grid">
-      <div class="skill">HTML &amp; CSS</div>
-      <div class="skill">JavaScript (ES6+)</div>
-      <div class="skill">React &amp; Vite</div>
-      <div class="skill">Three.js / WebGL</div>
-      <div class="skill">UI / UX Design</div>
-      <div class="skill">Git &amp; GitHub</div>
+    <div class="section-head"><h2 contenteditable="true" class="editable">Skills</h2></div>
+    <div class="grid">
+      <div class="skill" contenteditable="true">HTML &amp; CSS</div>
+      <div class="skill" contenteditable="true">JavaScript (ES6+)</div>
+      <div class="skill" contenteditable="true">React &amp; Vite</div>
+      <div class="skill" contenteditable="true">Three.js / WebGL</div>
+      <div class="skill" contenteditable="true">UI / UX Design</div>
+      <div class="skill" contenteditable="true">Git &amp; GitHub</div>
     </div>
   </section>
 
+  <!-- PROJECTS -->
   <section id="projects">
-    <div class="section-head"><h2 id="projects-title">Projects</h2></div>
-    <div class="grid" id="projects-grid">
-      <div class="project"><h3>3D Landing — Interactive</h3><p>WebGL landing with 3D particles and custom shader-driven neon look.</p></div>
-      <div class="project"><h3>Design System</h3><p>Reusable components, tokens and responsive patterns for fast UI development.</p></div>
-      <div class="project"><h3>Portfolio Site</h3><p>Case studies, animations and micro-interactions with GSAP & Three.js.</p></div>
+    <div class="section-head"><h2 contenteditable="true" class="editable">Projects</h2></div>
+    <div class="grid">
+      <div class="project" contenteditable="true">
+        <h3>3D Landing — Interactive</h3>
+        <p>WebGL landing with 3D particles and custom shader-driven neon look. Click to view live demo.</p>
+      </div>
+      <div class="project" contenteditable="true">
+        <h3>Design System</h3>
+        <p>Reusable components, tokens and responsive patterns for fast UI development.</p>
+      </div>
+      <div class="project" contenteditable="true">
+        <h3>Portfolio Site</h3>
+        <p>Case studies, animations and micro-interactions with GSAP &amp; Three.js.</p>
+      </div>
     </div>
   </section>
 
+  <!-- CONTACT -->
   <section id="contact">
-    <div class="section-head"><h2 id="contact-title">Contact</h2></div>
+    <div class="section-head"><h2 contenteditable="true" class="editable">Contact</h2></div>
     <div class="card" style="max-width:720px;margin:0 auto">
       <form id="contact-form">
         <div style="display:flex;gap:12px;margin-bottom:10px">
-          <input id="cname" name="name" placeholder="Your name" style="flex:1;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit" />
-          <input id="cemail" name="email" placeholder="Your email" style="flex:1;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit" />
+          <input id="cname" placeholder="Your name" style="flex:1;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit" />
+          <input id="cemail" placeholder="Your email" style="flex:1;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit" />
         </div>
-        <textarea id="cmsg" name="message" placeholder="Message" style="width:100%;height:120px;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit"></textarea>
+        <textarea id="cmsg" placeholder="Message" style="width:100%;height:120px;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit"></textarea>
         <div style="text-align:right;margin-top:12px"><button class="btn" type="button" id="sendBtn">Send Message</button></div>
       </form>
     </div>
@@ -138,149 +175,89 @@
     © <span id="year"></span> Ratan Mandal — Built with ❤️
   </footer>
 
-  <div class="hint">Tip: To edit your site open <code>?edit=on</code> and enter your password.</div>
-
-  <!-- EDITOR BAR (shown when unlocked) -->
-  <div class="editor-bar" id="editorBar" aria-hidden="true">
-    <h4>Edit Mode</h4>
-    <div><strong>Selected:</strong> <span id="selName">none</span></div>
-    <label>Text / HTML</label>
-    <input type="text" id="editText" placeholder="Edit text or innerHTML (use &lt;br&gt; for breaks)">
-    <label>Text Color</label>
-    <input type="color" id="editColor">
-    <label>Background Color</label>
-    <input type="color" id="editBgColor">
-    <label>Set link (for &lt;a&gt;)</label>
-    <input type="url" id="editHref" placeholder="https://example.com">
-    <label>Replace image</label>
-    <input type="file" id="editImage" accept="image/*">
-    <label>Add social link</label>
-    <input type="url" id="newSocialUrl" placeholder="https://instagram.com/yourprofile">
-    <select id="newSocialType"><option value="github">GitHub</option><option value="linkedin">LinkedIn</option><option value="instagram">Instagram</option><option value="twitter">Twitter</option></select>
-    <button id="applyBtn">Apply</button>
-    <button id="saveBtn" style="background:#2dd4bf;">Download HTML (Save)</button>
-    <button id="exitBtn" style="background:#ff7b7b;">Exit Edit Mode</button>
-    <div style="margin-top:8px;font-size:12px;color:var(--muted)">Tip: Click any element to select it. Use "Download HTML" to save changes locally then upload new index.html to GitHub.</div>
-  </div>
-
-  <!-- PASSWORD MODAL -->
-  <div class="pw-modal" id="pwModal" style="display:none">
-    <div class="pw-box">
-      <div style="color:var(--muted);margin-bottom:8px">Enter edit password to unlock editing</div>
-      <input id="pwInput" type="password" placeholder="Password">
-      <button id="pwSubmit">Unlock</button>
-      <div id="pwMsg" style="color:#ffb3b3;margin-top:8px;display:none"></div>
-    </div>
-  </div>
+  <div class="hint">Tip: Click on any text (it is editable). After editing, save this file and upload to your GitHub repo.</div>
 
   <script>
-    // ---------- EDIT MODE PROTECTION ----------
-    const EDIT_PASSWORD = 'Ratanmandal11@#'; // user provided password
-    const urlParams = new URLSearchParams(window.location.search);
-    const wantEdit = urlParams.get('edit') === 'on';
-    const pwModal = document.getElementById('pwModal');
-    const editorBar = document.getElementById('editorBar');
+    // === Simple Three.js animated background (particles + rotating 3D torus) ===
+    const canvas = document.getElementById('bgCanvas');
+    const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+    renderer.setPixelRatio(window.devicePixelRatio); renderer.setSize(window.innerWidth, window.innerHeight);
 
-    function showPw(){ pwModal.style.display='flex'; }
-    function hidePw(){ pwModal.style.display='none'; }
-    function enableEditUI(){ editorBar.style.display='block'; editorBar.setAttribute('aria-hidden','false'); document.body.classList.add('edit-mode'); }
-    function disableEditUI(){ editorBar.style.display='none'; editorBar.setAttribute('aria-hidden','true'); document.body.classList.remove('edit-mode'); }
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.set(0,0,60);
 
-    if(wantEdit && !sessionStorage.getItem('ratan_edit_unlocked')){ showPw(); }
-    if(sessionStorage.getItem('ratan_edit_unlocked')){ enableEditUI(); }
+    // lights
+    const fill = new THREE.DirectionalLight(0xffffff, 0.9); fill.position.set(5,10,7); scene.add(fill);
+    const amb = new THREE.AmbientLight(0x40475a,0.6); scene.add(amb);
 
-    document.getElementById('pwSubmit').addEventListener('click', ()=>{
-      const v = document.getElementById('pwInput').value;
-      if(v === EDIT_PASSWORD){ sessionStorage.setItem('ratan_edit_unlocked','1'); hidePw(); enableEditUI(); alert('Edit mode unlocked — Click any element to select and edit.'); }
-      else{ const m = document.getElementById('pwMsg'); m.style.display='block'; m.textContent='Wrong password'; }
+    // torus
+    const torusGeo = new THREE.TorusKnotGeometry(10,2.8,150,16);
+    const torusMat = new THREE.MeshStandardMaterial({
+      metalness:0.6, roughness:0.2, emissive:0x1a1530, emissiveIntensity:0.9
     });
+    const torus = new THREE.Mesh(torusGeo, torusMat); scene.add(torus);
 
-    document.getElementById('exitBtn').addEventListener('click', ()=>{ sessionStorage.removeItem('ratan_edit_unlocked'); disableEditUI(); alert('Edit mode exited. Reopen with ?edit=on to unlock again.'); });
+    // particle system
+    const particlesGeo = new THREE.BufferGeometry();
+    const count = 1200;
+    const positions = new Float32Array(count * 3);
+    for(let i=0;i<count;i++){
+      positions[i*3] = (Math.random()-0.5) * 200;
+      positions[i*3+1] = (Math.random()-0.5) * 200;
+      positions[i*3+2] = (Math.random()-0.5) * 200;
+    }
+    particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+    const particlesMat = new THREE.PointsMaterial({size:0.9, color:0xb7a7ff, transparent:true, opacity:0.85});
+    const points = new THREE.Points(particlesGeo, particlesMat); scene.add(points);
 
-    // ---------- SELECT / EDIT HANDLERS ----------
-    let selected = null;
-    function clearSelection(){ if(selected){ selected.classList.remove('selected-outline'); } selected = null; document.getElementById('selName').textContent='none'; document.getElementById('editText').value=''; document.getElementById('editColor').value='#ffffff'; document.getElementById('editBgColor').value='#000000'; document.getElementById('editHref').value=''; }
+    // resize
+    window.addEventListener('resize', ()=>{renderer.setSize(window.innerWidth, window.innerHeight); camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();});
 
-    document.addEventListener('click', (e)=>{
-      if(!sessionStorage.getItem('ratan_edit_unlocked')) return;
-      const el = e.target;
-      if(el.closest('.editor-bar') || el.closest('.pw-box')) return;
-      e.preventDefault(); e.stopPropagation();
-      if(selected) selected.classList.remove('selected-outline');
-      selected = el;
-      selected.classList.add('selected-outline');
-      document.getElementById('selName').textContent = selected.tagName.toLowerCase() + (selected.id?('#'+selected.id):'');
-      document.getElementById('editText').value = selected.innerHTML.replace(/\n/g,'');
-      try{ const cs = window.getComputedStyle(selected); document.getElementById('editColor').value = rgbToHex(cs.color || '#ffffff'); document.getElementById('editBgColor').value = rgbToHex(cs.backgroundColor || '#000000'); }catch(err){}
-      if(selected.tagName.toLowerCase()==='a') document.getElementById('editHref').value = selected.href; else document.getElementById('editHref').value='';
-    }, true);
+    // simple parallax using mouse
+    let mouseX=0, mouseY=0; document.addEventListener('mousemove', (e)=>{mouseX = (e.clientX - window.innerWidth/2)/100; mouseY = (e.clientY - window.innerHeight/2)/100});
 
-    document.getElementById('applyBtn').addEventListener('click', ()=>{
-      if(!selected){ alert('Select an element first by clicking it on the page.'); return; }
-      const txt = document.getElementById('editText').value;
-      const color = document.getElementById('editColor').value;
-      const bg = document.getElementById('editBgColor').value;
-      const href = document.getElementById('editHref').value;
-      const imgFile = document.getElementById('editImage').files[0];
+    // animation loop
+    const clock = new THREE.Clock();
+    function animate(){
+      const t = clock.getElapsedTime();
+      torus.rotation.x += 0.005 + Math.sin(t*0.5)*0.002;
+      torus.rotation.y += 0.006;
+      torus.position.x += (mouseX - torus.position.x) * 0.03;
+      torus.position.y += (-mouseY - torus.position.y) * 0.03;
 
-      try{ selected.innerHTML = txt; }catch(err){}
-      selected.style.color = color;
-      selected.style.backgroundColor = bg;
-      if(href && selected.tagName.toLowerCase()==='a'){ selected.href = href; }
-      if(imgFile){ const reader = new FileReader(); reader.onload = (ev)=>{
-        if(selected.tagName.toLowerCase() === 'img'){ selected.src = ev.target.result; }
-        else{
-          const img = selected.querySelector('img');
-          if(img) img.src = ev.target.result; else{
-            selected.innerHTML = '<img src=\"'+ev.target.result+'\" style=\"max-width:100%;height:auto;border-radius:8px\">';
-          }
-        }
-      }; reader.readAsDataURL(imgFile); }
+      points.rotation.y += 0.0008;
+      renderer.render(scene,camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
 
-      const newSocial = document.getElementById('newSocialUrl').value.trim();
-      const type = document.getElementById('newSocialType').value;
-      if(newSocial){
-        if(type === 'github'){ document.getElementById('link-github').href = newSocial; document.getElementById('link-github').textContent = 'GitHub'; }
-        if(type === 'linkedin'){ document.getElementById('link-linkedin').href = newSocial; document.getElementById('link-linkedin').textContent = 'LinkedIn'; }
-      }
+    // subtle entrance animations using GSAP
+    gsap.from('.card', {duration:1, y:20, opacity:0, stagger:0.08, ease:'power2.out'});
+    gsap.from('#hero-name', {duration:1.2, y:30, opacity:0, delay:0.15, ease:'power3.out'});
 
-      alert('Applied changes to selected element. Use \"Download HTML\" to save changes permanently.');
-    });
-
-    document.getElementById('saveBtn').addEventListener('click', ()=>{
-      const clone = document.documentElement.cloneNode(true);
-      const eb = clone.querySelector('#editorBar'); if(eb) eb.remove();
-      const pm = clone.querySelector('#pwModal'); if(pm) pm.remove();
-      clone.querySelectorAll('.selected-outline').forEach(n=>n.classList.remove('selected-outline'));
-      const doctype = '<!DOCTYPE html>\\n';
-      const html = doctype + clone.outerHTML;
-      const blob = new Blob([html], {type:'text/html'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'index.html'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    });
-
-    function rgbToHex(rgb){ if(!rgb) return '#000000'; if(rgb.indexOf('rgb')<0) return rgb; const nums = rgb.match(/\\d+/g); if(!nums) return '#000000'; return '#'+((1<<24)+(parseInt(nums[0])<<16)+(parseInt(nums[1])<<8)+parseInt(nums[2])).toString(16).slice(1); }
-
-    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ if(sessionStorage.getItem('ratan_edit_unlocked')){ if(confirm('Exit edit mode?')){ sessionStorage.removeItem('ratan_edit_unlocked'); disableEditUI(); } } } });
-
+    // button anchors
     document.getElementById('btn-projects').addEventListener('click', ()=>{document.getElementById('projects').scrollIntoView({behavior:'smooth'})});
     document.getElementById('btn-contact').addEventListener('click', ()=>{document.getElementById('contact').scrollIntoView({behavior:'smooth'})});
-    document.getElementById('sendBtn').addEventListener('click', ()=>{ const name=document.getElementById('cname').value.trim(); if(!name){alert('Please enter your name');return;} alert('Thanks '+name+' — demo message sent.'); });
 
-    if(wantEdit && !sessionStorage.getItem('ratan_edit_unlocked')){ pwModal.style.display='flex'; }
+    // contact (local demo: show success toast)
+    document.getElementById('sendBtn').addEventListener('click', ()=>{
+      const name = document.getElementById('cname').value.trim();
+      if(!name){alert('Please enter your name'); return}
+      alert('Thanks '+name+" — message sent (demo). Update this form to connect to an email backend or use Formspree).")
+    });
 
-    // THREE.js background
-    const canvas = document.getElementById('bgCanvas');
-    const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true}); renderer.setPixelRatio(window.devicePixelRatio); renderer.setSize(window.innerWidth, window.innerHeight);
-    const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000); camera.position.set(0,0,60);
-    const fill = new THREE.DirectionalLight(0xffffff,0.9); fill.position.set(5,10,7); scene.add(fill); const amb = new THREE.AmbientLight(0x40475a,0.6); scene.add(amb);
-    const torusGeo = new THREE.TorusKnotGeometry(10,2.8,150,16); const torusMat = new THREE.MeshStandardMaterial({metalness:0.6,roughness:0.2,emissive:0x1a1530,emissiveIntensity:0.9}); const torus = new THREE.Mesh(torusGeo,torusMat); scene.add(torus);
-    const particlesGeo = new THREE.BufferGeometry(); const count = 1200; const positions = new Float32Array(count*3); for(let i=0;i<count;i++){ positions[i*3]=(Math.random()-0.5)*200; positions[i*3+1]=(Math.random()-0.5)*200; positions[i*3+2]=(Math.random()-0.5)*200; } particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions,3)); const particlesMat = new THREE.PointsMaterial({size:0.9,color:0xb7a7ff,transparent:true,opacity:0.85}); const points = new THREE.Points(particlesGeo,particlesMat); scene.add(points);
-    window.addEventListener('resize', ()=>{ renderer.setSize(window.innerWidth, window.innerHeight); camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); });
-    let mouseX=0, mouseY=0; document.addEventListener('mousemove',(e)=>{ mouseX=(e.clientX-window.innerWidth/2)/100; mouseY=(e.clientY-window.innerHeight/2)/100; });
-    const clock = new THREE.Clock(); function animate(){ const t = clock.getElapsedTime(); torus.rotation.x += 0.005 + Math.sin(t*0.5)*0.002; torus.rotation.y += 0.006; torus.position.x += (mouseX - torus.position.x)*0.03; torus.position.y += (-mouseY - torus.position.y)*0.03; points.rotation.y += 0.0008; renderer.render(scene,camera); requestAnimationFrame(animate);} animate();
-    gsap.from('.card',{duration:1,y:20,opacity:0,stagger:0.08,ease:'power2.out'}); gsap.from('#hero-name',{duration:1.2,y:30,opacity:0,delay:0.15,ease:'power3.out'});
+    // set year
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Accessibility: allow Enter key to submit demo
+    document.getElementById('contact-form').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('sendBtn').click(); } });
+
+    // ---- Helpful notes for editing the file (visible only in source):
+    // 1) Change your name at #hero-name and #meta-title. Avatar initials at #avatar.
+    // 2) Edit project cards inside #projects section. They are contenteditable already.
+    // 3) To publish: save this file as index.html and upload to a repo named ratanmandal.github.io OR upload to any repo and enable GitHub Pages from settings.
+    // 4) For custom domain or more pages, split into folders and add assets (images) alongside index.html.
   </script>
 </body>
 </html>
