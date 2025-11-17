@@ -3,197 +3,176 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Edit Mode Portfolio</title>
+<title>Editable Live Website</title>
+
 <style>
-  body {
-    margin: 0;
-    font-family: Arial;
-    color: white;
-    overflow-x: hidden;
+    body {
+        margin: 0;
+        font-family: Arial;
+        color: white;
+        overflow-x: hidden;
+    }
 
-    /* Default Animated Gradient */
-    background: linear-gradient(130deg, #ff0077, #4200ff, #00d4ff);
-    background-size: 600% 600%;
-    animation: gradientMove 15s infinite alternate ease-in-out;
-  }
+    /* Animated Background */
+    #bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(45deg, #ff00cc, #3333ff);
+        background-size: 400% 400%;
+        animation: animBG 10s infinite alternate ease-in-out;
+        filter: blur(2px);
+    }
 
-  @keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+    @keyframes animBG {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 100% 50%; }
+    }
 
-  /* Content */
-  .container {
-    padding: 40px;
-  }
+    /* Content */
+    #content {
+        padding: 50px;
+    }
 
-  /* EDITOR PANEL */
-  #editorPanel {
-    position: fixed;
-    top: 50%;
-    right: -320px;
-    transform: translateY(-50%);
-    width: 300px;
-    background: #111;
-    padding: 20px;
-    border-left: 3px solid #00d4ff;
-    transition: 0.3s ease;
-    z-index: 9999;
-  }
-  #editorPanel.open { right: 0; }
+    [contenteditable="true"] {
+        border: 1px dashed #fff;
+        padding: 5px;
+        border-radius: 5px;
+    }
 
-  #editorPanel input,
-  #editorPanel textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 6px 0;
-    background: #222;
-    border: 1px solid #555;
-    color: white;
-  }
+    /* Right Side Editor Panel */
+    #panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 320px;
+        height: 100vh;
+        background: #000000cc;
+        color: white;
+        padding: 20px;
+        box-shadow: -3px 0 8px #000;
+        overflow-y: auto;
+    }
 
-  #editorPanel button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    background: #00d4ff;
-    border: none;
-    color: black;
-    font-weight: bold;
-    cursor: pointer;
-  }
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: none;
+        background: #00c8ff;
+        color: black;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
 
-  /* Upload BG Button */
-  #bgPreview {
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-    margin-top: 10px;
-    display: none;
-  }
-
-  .edit-highlight {
-    outline: 2px dashed yellow;
-  }
+    textarea {
+        width: 100%;
+        height: 200px;
+    }
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 CONTENT (editable) -->
-<div class="container">
-  <h1 data-edit>My Portfolio</h1>
-  <p data-edit>Welcome to my editable website. Click any text to edit me.</p>
-  <div data-edit>
-    <h2>About Me</h2>
-    <p>I am a web developer who loves animations and editing tools.</p>
-  </div>
-  <div data-edit>
-    <h2>Projects</h2>
-    <p>Project details will go here...</p>
-  </div>
-  <div data-edit>
-    <h2>Contact</h2>
-    <p>Email: example@mail.com</p>
-  </div>
+<div id="bg"></div>
+
+<div id="content">
+    <h1 class="editable" contenteditable="true">My Portfolio</h1>
+    <p class="editable" contenteditable="true">
+        Welcome to my editable website. Click any text to edit me.
+    </p>
+
+    <h2 class="editable" contenteditable="true">About Me</h2>
+    <p class="editable" contenteditable="true">
+        I am a web developer who loves animations and editing tools.
+    </p>
+
+    <h2 class="editable" contenteditable="true">Projects</h2>
+    <p class="editable" contenteditable="true">Project details will go here...</p>
+
+    <h2 class="editable" contenteditable="true">Contact</h2>
+    <p class="editable" contenteditable="true">Email: example@mail.com</p>
 </div>
 
-<!-- 🔥 EDITOR PANEL -->
-<div id="editorPanel">
-  <h3>Edit Content</h3>
-  <textarea id="editorText" rows="6"></textarea>
+<div id="panel">
+    <h2>Edit HTML Code</h2>
+    <textarea id="htmlBox"></textarea>
+    <button onclick="applyCode()">Apply Code</button>
 
-  <button id="saveChange">Apply Change</button>
-  <button id="saveBrowser">Save to Browser</button>
-  <button id="downloadHTML">Download HTML</button>
-  <button id="restoreDefault">Restore Default</button>
+    <button onclick="saveData()">Save to Browser</button>
+    <button onclick="downloadHTML()">Download HTML</button>
 
-  <hr color="#333">
-
-  <h3>Background Animation</h3>
-  <input type="file" id="bgUpload" accept="video/*,image/gif" />
-  <video id="bgPreview" autoplay loop muted></video>
+    <h3>Upload Animation Background</h3>
+    <input type="file" id="bgUpload" accept="video/*" />
 </div>
 
 <script>
-let selectedElement = null;
+    let selected = null;
 
-/* CLICK TO EDIT */
-document.querySelectorAll("[data-edit]").forEach(el => {
-  el.addEventListener("click", () => {
-    selectedElement = el;
-    document.querySelectorAll("[data-edit]").forEach(x => x.classList.remove("edit-highlight"));
-    el.classList.add("edit-highlight");
+    // Click and live-load code into editor
+    document.querySelectorAll(".editable").forEach(el => {
+        el.addEventListener("click", () => {
+            selected = el;
+            document.getElementById("htmlBox").value = el.innerHTML;
+        });
 
-    document.getElementById("editorText").value = el.innerHTML;
-    document.getElementById("editorPanel").classList.add("open");
-  });
-});
+        // Live editing + auto-save
+        el.addEventListener("input", () => {
+            saveData();
+        });
+    });
 
-/* LIVE APPLY */
-document.getElementById("editorText").addEventListener("input", () => {
-  if (selectedElement) {
-    selectedElement.innerHTML = document.getElementById("editorText").value;
-  }
-});
+    function applyCode() {
+        if (selected) {
+            selected.innerHTML = document.getElementById("htmlBox").value;
+            saveData();
+        }
+    }
 
-/* BUTTON: Apply (same as live) */
-document.getElementById("saveChange").onclick = () => {
-  if (selectedElement) {
-    selectedElement.innerHTML = document.getElementById("editorText").value;
-  }
-};
+    // Save to LocalStorage
+    function saveData() {
+        let data = [];
+        document.querySelectorAll(".editable").forEach(el => {
+            data.push(el.innerHTML);
+        });
+        localStorage.setItem("liveContent", JSON.stringify(data));
+    }
 
-/* SAVE TO BROWSER */
-document.getElementById("saveBrowser").onclick = () => {
-  localStorage.setItem("savedPage", document.body.innerHTML);
-  alert("Saved successfully!");
-};
+    // Restore on load
+    window.onload = () => {
+        let saved = localStorage.getItem("liveContent");
+        if (saved) {
+            let arr = JSON.parse(saved);
+            document.querySelectorAll(".editable").forEach((el, i) => {
+                el.innerHTML = arr[i];
+            });
+        }
+    };
 
-/* RESTORE */
-document.getElementById("restoreDefault").onclick = () => {
-  localStorage.removeItem("savedPage");
-  location.reload();
-};
+    // Download full page
+    function downloadHTML() {
+        const source = document.documentElement.outerHTML;
+        const file = new Blob([source], { type: "text/html" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(file);
+        a.download = "website.html";
+        a.click();
+    }
 
-/* LOAD SAVED */
-window.onload = () => {
-  let saved = localStorage.getItem("savedPage");
-  if (saved) document.body.innerHTML = saved;
-};
-
-/* DOWNLOAD HTML */
-document.getElementById("downloadHTML").onclick = () => {
-  const blob = new Blob([document.documentElement.outerHTML], { type: "text/html" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "edited_page.html";
-  a.click();
-};
-
-/* UPLOAD CUSTOM ANIMATION BG */
-document.getElementById("bgUpload").addEventListener("change", e => {
-  let file = e.target.files[0];
-  if (!file) return;
-
-  let url = URL.createObjectURL(file);
-
-  document.body.style.background = "none";
-  document.body.style.backgroundColor = "black";
-
-  let vid = document.getElementById("bgPreview");
-  vid.src = url;
-  vid.style.display = "block";
-
-  vid.style.position = "fixed";
-  vid.style.top = "0";
-  vid.style.left = "0";
-  vid.style.width = "100vw";
-  vid.style.height = "100vh";
-  vid.style.objectFit = "cover";
-  vid.style.zIndex = "-1";
-});
+    // Upload Background animation (video)
+    document.getElementById("bgUpload").addEventListener("change", (e) => {
+        let file = e.target.files[0];
+        if (file) {
+            let url = URL.createObjectURL(file);
+            document.getElementById("bg").style.background = "none";
+            document.getElementById("bg").innerHTML =
+                `<video src="${url}" autoplay loop muted style="width:100%;height:100%;object-fit:cover;"></video>`;
+        }
+    });
 </script>
 
 </body>
