@@ -3,11 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ratan Mandal — Portfolio </title>
+  <title>Ratan Mandal — Portfolio</title>
   <style>
     :root{--bg:#0b1020;--card:#0f1724;--accent:#7c5cff;--muted:#97a0b9;--glass:rgba(255,255,255,0.04)}
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;color:#e6f0ff;background:var(--bg)}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;color:#e6f0ff;background:var(--bg);position:relative;overflow-x:hidden}
+    /* Animated background (smooth moving gradient) */
+    body::before{
+      content:"";position:fixed;inset:-20%;z-index:0;pointer-events:none;
+      background:linear-gradient(120deg, rgba(124,92,255,0.18), rgba(77,211,255,0.12), rgba(45,212,191,0.08), rgba(124,92,255,0.12));
+      filter:blur(60px);transform:scale(1.1);animation:moveGradient 18s linear infinite;
+    }
+    @keyframes moveGradient{0%{transform:translate3d(-5%,0,0) scale(1.05)}50%{transform:translate3d(5%,0,0) scale(1.12)}100%{transform:translate3d(-5%,0,0) scale(1.05)}}
+
     header{position:relative;z-index:3;padding:20px 6%;display:flex;align-items:center;justify-content:space-between}
     .logo{font-weight:700;font-size:20px}
     nav a{color:var(--muted);margin-left:18px;text-decoration:none;font-weight:600}
@@ -28,7 +36,7 @@
     @media (max-width:980px){main{grid-template-columns:1fr;gap:24px;padding-top:120px}.avatar{height:180px}}
 
     /* Editor UI */
-    .editor-bar{position:fixed;right:18px;top:80px;width:340px;background:rgba(5,7,15,0.95);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);z-index:999;color:var(--muted);display:none}
+    .editor-bar{position:fixed;right:18px;top:80px;width:360px;background:rgba(5,7,15,0.95);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);z-index:9999;color:var(--muted);display:none;box-shadow:0 10px 40px rgba(2,6,23,0.6)}
     .editor-bar h4{margin:6px 0 8px;font-size:15px;color:#fff}
     .editor-bar label{font-size:13px;color:var(--muted);display:block;margin-top:8px}
     .editor-bar input[type="text"],.editor-bar input[type="color"],.editor-bar input[type="url"],.editor-bar select,.editor-bar textarea{width:100%;padding:8px;border-radius:6px;border:none;margin-top:6px;background:rgba(255,255,255,0.03);color:inherit}
@@ -38,13 +46,13 @@
     .hint{position:fixed;left:16px;bottom:16px;background:var(--glass);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);z-index:6;color:var(--muted);font-size:13px}
 
     /* Password modal */
-    .pw-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:1000}
+    .pw-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:10000}
     .pw-box{background:#071024;padding:18px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);width:380px}
     .pw-box input{width:100%;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit}
     .pw-box button{margin-top:10px;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#021028;font-weight:700}
 
     /* small helper for saved badge */
-    .save-badge{position:fixed;right:18px;bottom:18px;background:#173047;padding:8px 12px;border-radius:8px;color:#bfe0ff;font-size:13px;z-index:999;display:none}
+    .save-badge{position:fixed;right:18px;bottom:18px;background:#173047;padding:8px 12px;border-radius:8px;color:#bfe0ff;font-size:13px;z-index:9999;display:none}
   </style>
 </head>
 <body>
@@ -142,25 +150,35 @@
   <div class="editor-bar" id="editorBar" aria-hidden="true">
     <h4>Edit Mode</h4>
     <div><strong>Selected:</strong> <span id="selName">none</span></div>
+
     <label>Text / HTML</label>
     <textarea id="editText" placeholder="Edit innerHTML"></textarea>
+
     <label>Text Color</label>
     <input type="color" id="editColor">
+
     <label>Background Color</label>
     <input type="color" id="editBgColor">
+
     <label>Set link (for &lt;a&gt;)</label>
     <input type="url" id="editHref" placeholder="https://example.com">
+
     <label>Replace image</label>
     <input type="file" id="editImage" accept="image/*">
+
     <label>Add social link</label>
     <input type="url" id="newSocialUrl" placeholder="https://instagram.com/yourprofile">
     <select id="newSocialType"><option value="github">GitHub</option><option value="linkedin">LinkedIn</option><option value="instagram">Instagram</option><option value="twitter">Twitter</option></select>
-    <button id="applyBtn">Apply</button>
-    <button id="saveLocalBtn" style="background:#2dd4bf;">Save (Local)</button>
-    <button id="downloadBtn" style="background:#6fc3ff;">Download HTML</button>
-    <button id="restoreBtn" style="background:#f3a76b;">Restore Saved</button>
-    <button id="exitBtn" style="background:#ff7b7b;">Exit Edit Mode</button>
-    <div style="margin-top:8px;font-size:12px;color:var(--muted)">Tip: Click any element to select it. Use "Save (Local)" to persist edits in this browser. Use "Download HTML" to get updated file for GitHub.</div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+      <button id="applyBtn">Apply</button>
+      <button id="saveLocalBtn" style="background:#2dd4bf;">Save (Local)</button>
+      <button id="downloadBtn" style="background:#6fc3ff;">Download HTML</button>
+      <button id="restoreBtn" style="background:#f3a76b;">Restore Saved</button>
+      <button id="exitBtn" style="background:#ff7b7b;">Exit Edit Mode</button>
+    </div>
+
+    <div style="margin-top:8px;font-size:12px;color:var(--muted)">Tip: Click any element to select it. Edits apply live. Use "Save (Local)" to persist edits in this browser. Use "Download HTML" to get updated file for GitHub.</div>
   </div>
 
   <!-- Password modal -->
@@ -176,142 +194,266 @@
   <div class="save-badge" id="saveBadge">Saved locally</div>
 
   <script>
-    // EDIT PASSWORD (provided earlier)
-    const EDIT_PASSWORD = 'Ratanmandal11@#';
+    /***** CONFIG *****/
+    // store SHA-256 of the allowed password (hex). This is safer than putting the plain password in JS.
+    // (Hash of your password was computed and embedded here)
+    const EDIT_PASSWORD_HASH = 'e1286e53eebe6f8cadc341cc72096adad4ec8040f16b476016f21d8e1d558dfc';
+
+    /***** UTIL: SHA-256 (returns hex) *****/
+    async function sha256hex(str) {
+      const enc = new TextEncoder();
+      const data = enc.encode(str);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hash));
+      return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    /***** UI refs *****/
     const urlParams = new URLSearchParams(window.location.search);
     const wantEdit = urlParams.get('edit') === 'on';
     const pwModal = document.getElementById('pwModal');
     const editorBar = document.getElementById('editorBar');
     const saveBadge = document.getElementById('saveBadge');
+    const selNameEl = document.getElementById('selName');
+    const editText = document.getElementById('editText');
+    const editColor = document.getElementById('editColor');
+    const editBgColor = document.getElementById('editBgColor');
+    const editHref = document.getElementById('editHref');
+    const editImage = document.getElementById('editImage');
+    const newSocialUrl = document.getElementById('newSocialUrl');
+    const newSocialType = document.getElementById('newSocialType');
 
+    /***** STATE *****/
+    let selected = null;
+    const STORAGE_KEY = 'ratan_portfolio_saved_fullhtml';
+    const UNLOCK_KEY = 'ratan_edit_unlocked';
+
+    /***** Show/hide Editor UI *****/
     function showPw(){ pwModal.style.display='flex'; }
     function hidePw(){ pwModal.style.display='none'; }
     function enableEditUI(){ editorBar.style.display='block'; editorBar.setAttribute('aria-hidden','false'); document.body.classList.add('edit-mode'); }
-    function disableEditUI(){ editorBar.style.display='none'; editorBar.setAttribute('aria-hidden','true'); document.body.classList.remove('edit-mode'); }
+    function disableEditUI(){ editorBar.style.display='none'; editorBar.setAttribute('aria-hidden','true'); document.body.classList.remove('edit-mode'); clearSelection(); }
 
-    if(wantEdit && !sessionStorage.getItem('ratan_edit_unlocked')){ showPw(); }
-    if(sessionStorage.getItem('ratan_edit_unlocked')){ enableEditUI(); }
+    /***** Init: if ?edit=on then ask pw (unless unlocked) *****/
+    if(wantEdit && !sessionStorage.getItem(UNLOCK_KEY)){ showPw(); }
+    if(sessionStorage.getItem(UNLOCK_KEY)) enableEditUI();
 
-    document.getElementById('pwSubmit').addEventListener('click', ()=>{
-      const v = document.getElementById('pwInput').value;
-      if(v === EDIT_PASSWORD){ sessionStorage.setItem('ratan_edit_unlocked','1'); hidePw(); enableEditUI(); alert('Edit mode unlocked — Click any element to select and edit.'); }
-      else{ const m = document.getElementById('pwMsg'); m.style.display='block'; m.textContent='Wrong password'; }
+    document.getElementById('pwSubmit').addEventListener('click', async ()=>{
+      const v = document.getElementById('pwInput').value || '';
+      const hv = await sha256hex(v);
+      if(hv === EDIT_PASSWORD_HASH){
+        sessionStorage.setItem(UNLOCK_KEY,'1');
+        hidePw();
+        enableEditUI();
+        alert('Edit mode unlocked — Click any element to select and edit.');
+      } else {
+        const m = document.getElementById('pwMsg'); m.style.display='block'; m.textContent='Wrong password';
+      }
     });
 
-    document.getElementById('exitBtn').addEventListener('click', ()=>{ sessionStorage.removeItem('ratan_edit_unlocked'); disableEditUI(); alert('Edit mode exited. Reopen with ?edit=on to unlock again.'); });
+    document.getElementById('exitBtn').addEventListener('click', ()=>{ sessionStorage.removeItem(UNLOCK_KEY); disableEditUI(); alert('Edit mode exited. Reopen with ?edit=on to unlock again.'); });
 
-    // SELECT / EDIT
-    let selected = null;
-    function clearSelection(){ if(selected){ selected.classList.remove('selected-outline'); } selected = null; document.getElementById('selName').textContent='none'; document.getElementById('editText').value=''; document.getElementById('editColor').value='#ffffff'; document.getElementById('editBgColor').value='#000000'; document.getElementById('editHref').value=''; }
+    /***** Selection handling *****/
+    function clearSelection(){
+      if(selected){ selected.classList.remove('selected-outline'); }
+      selected = null;
+      selNameEl.textContent='none';
+      editText.value=''; editHref.value=''; editImage.value=''; editColor.value='#ffffff'; editBgColor.value='#000000';
+    }
 
+    // click to select (only when unlocked)
     document.addEventListener('click', (e)=>{
-      if(!sessionStorage.getItem('ratan_edit_unlocked')) return;
+      if(!sessionStorage.getItem(UNLOCK_KEY)) return;
+      // ignore clicks inside editor UI and password modal
+      if(e.target.closest('.editor-bar') || e.target.closest('.pw-box')) return;
+      // ignore clicks on file-download link created by script etc
+      // do not prevent default (so normal link behavior still works)
       const el = e.target;
-      if(el.closest('.editor-bar') || el.closest('.pw-box')) return;
-      e.preventDefault(); e.stopPropagation();
       if(selected) selected.classList.remove('selected-outline');
       selected = el;
       selected.classList.add('selected-outline');
-      document.getElementById('selName').textContent = selected.tagName.toLowerCase() + (selected.id?('#'+selected.id):'');
-      document.getElementById('editText').value = selected.innerHTML.replace(/\n/g,'');
-      try{ const cs = window.getComputedStyle(selected); document.getElementById('editColor').value = rgbToHex(cs.color || '#ffffff'); document.getElementById('editBgColor').value = rgbToHex(cs.backgroundColor || '#000000'); }catch(err){}
-      if(selected.tagName.toLowerCase()==='a') document.getElementById('editHref').value = selected.href; else document.getElementById('editHref').value='';
+      selNameEl.textContent = selected.tagName.toLowerCase() + (selected.id?('#'+selected.id):'');
+      // populate edit controls based on element type
+      const tag = selected.tagName.toLowerCase();
+      // innerHTML for most, value for inputs
+      if(tag === 'input' || tag === 'textarea'){
+        editText.value = selected.value || '';
+      } else {
+        editText.value = selected.innerHTML.replace(/\n/g,'');
+      }
+      // color and bg
+      try{ const cs = window.getComputedStyle(selected); editColor.value = rgbToHex(cs.color || '#ffffff'); editBgColor.value = rgbToHex(cs.backgroundColor || '#000000'); }catch(err){}
+      // href for anchors
+      if(tag === 'a') editHref.value = selected.href || '';
+      else editHref.value = '';
+      // clear image file input
+      editImage.value = '';
     }, true);
 
+    /***** Live apply while typing in editor controls *****/
+    // Text area live update
+    editText.addEventListener('input', ()=>{
+      if(!selected) return;
+      const tag = selected.tagName.toLowerCase();
+      try{
+        if(tag === 'input' || tag === 'textarea'){
+          selected.value = editText.value;
+        } else {
+          selected.innerHTML = editText.value;
+        }
+      }catch(err){}
+    });
+
+    // color and background live update
+    editColor.addEventListener('input', ()=>{ if(!selected) return; selected.style.color = editColor.value; });
+    editBgColor.addEventListener('input', ()=>{ if(!selected) return; selected.style.backgroundColor = editBgColor.value; });
+
+    // href live
+    editHref.addEventListener('input', ()=>{ if(!selected) return; if(selected.tagName.toLowerCase() === 'a'){ selected.href = editHref.value; } });
+
+    // image preview on file select (not auto-applied until Apply pressed)
+    let pendingImageDataURL = null;
+    editImage.addEventListener('change', (ev)=>{
+      const f = ev.target.files[0];
+      if(!f) { pendingImageDataURL = null; return; }
+      const reader = new FileReader();
+      reader.onload = (e)=>{ pendingImageDataURL = e.target.result; };
+      reader.readAsDataURL(f);
+    });
+
+    /***** Apply button (applies any pending image and social link additions too) *****/
     document.getElementById('applyBtn').addEventListener('click', ()=>{
       if(!selected){ alert('Select an element first by clicking it on the page.'); return; }
-      const txt = document.getElementById('editText').value;
-      const color = document.getElementById('editColor').value;
-      const bg = document.getElementById('editBgColor').value;
-      const href = document.getElementById('editHref').value;
-      const imgFile = document.getElementById('editImage').files[0];
-
-      try{ selected.innerHTML = txt; }catch(err){}
-      selected.style.color = color;
-      selected.style.backgroundColor = bg;
-      if(href && selected.tagName.toLowerCase()==='a'){ selected.href = href; }
-      if(imgFile){ const reader = new FileReader(); reader.onload = (ev)=>{
-        if(selected.tagName.toLowerCase() === 'img'){ selected.src = ev.target.result; }
-        else{
-          const img = selected.querySelector('img');
-          if(img) img.src = ev.target.result; else{
-            selected.innerHTML = '<img src="'+ev.target.result+'" style="max-width:100%;height:auto;border-radius:8px">';
+      const txt = editText.value;
+      const color = editColor.value;
+      const bg = editBgColor.value;
+      const href = editHref.value;
+      try{
+        const tag = selected.tagName.toLowerCase();
+        if(tag === 'input' || tag === 'textarea'){ selected.value = txt; } else { selected.innerHTML = txt; }
+        selected.style.color = color;
+        selected.style.backgroundColor = bg;
+        if(href && tag === 'a'){ selected.href = href; }
+        if(pendingImageDataURL){
+          if(selected.tagName.toLowerCase() === 'img'){ selected.src = pendingImageDataURL; }
+          else {
+            const img = selected.querySelector('img');
+            if(img) img.src = pendingImageDataURL;
+            else {
+              // insert image preserving text
+              selected.innerHTML = '<img src="'+pendingImageDataURL+'" style="max-width:100%;height:auto;border-radius:8px">';
+            }
           }
+          pendingImageDataURL = null;
+          editImage.value = '';
         }
-      }; reader.readAsDataURL(imgFile); }
+        // add/update social link
+        const newSocial = newSocialUrl.value.trim();
+        const type = newSocialType.value;
+        if(newSocial){
+          if(type === 'github'){ document.getElementById('link-github').href = newSocial; document.getElementById('link-github').textContent = 'GitHub'; }
+          if(type === 'linkedin'){ document.getElementById('link-linkedin').href = newSocial; document.getElementById('link-linkedin').textContent = 'LinkedIn'; }
+          if(type === 'instagram'){ // create link if not exist
+            let a = document.querySelector('#link-instagram');
+            if(!a){
+              a = document.createElement('a'); a.id='link-instagram'; a.style.padding='8px 10px'; a.style.borderRadius='8px'; a.style.background='rgba(255,255,255,0.02)'; a.style.color='var(--muted)'; a.style.fontWeight='700'; a.style.textDecoration='none';
+              a.textContent='Instagram';
+              document.querySelector('.meta').appendChild(a);
+            }
+            a.href = newSocial;
+          }
+          if(type === 'twitter'){
+            let a = document.querySelector('#link-twitter');
+            if(!a){
+              a = document.createElement('a'); a.id='link-twitter'; a.style.padding='8px 10px'; a.style.borderRadius='8px'; a.style.background='rgba(255,255,255,0.02)'; a.style.color='var(--muted)'; a.style.fontWeight='700'; a.style.textDecoration='none';
+              a.textContent='Twitter';
+              document.querySelector('.meta').appendChild(a);
+            }
+            a.href = newSocial;
+          }
+          newSocialUrl.value = '';
+        }
 
-      const newSocial = document.getElementById('newSocialUrl').value.trim();
-      const type = document.getElementById('newSocialType').value;
-      if(newSocial){
-        if(type === 'github'){ document.getElementById('link-github').href = newSocial; document.getElementById('link-github').textContent = 'GitHub'; }
-        if(type === 'linkedin'){ document.getElementById('link-linkedin').href = newSocial; document.getElementById('link-linkedin').textContent = 'LinkedIn'; }
+        alert('Applied changes to selected element. Use "Save (Local)" to persist edits in this browser or "Download HTML" to save file for GitHub.');
+      }catch(err){
+        console.error(err);
+        alert('Could not apply changes to this element.');
       }
-
-      alert('Applied changes to selected element. Use "Save (Local)" to persist edits in this browser or "Download HTML" to save file for GitHub.');
     });
 
-    // SAVE to localStorage
+    /***** Save full HTML to localStorage (includes doctype) *****/
     document.getElementById('saveLocalBtn').addEventListener('click', ()=>{
-      // save body innerHTML only (editor UI excluded)
-      const clone = document.body.cloneNode(true);
-      // remove editor UI and modal
-      const eb = clone.querySelector('#editorBar'); if(eb) eb.remove();
-      const pm = clone.querySelector('#pwModal'); if(pm) pm.remove();
-      const html = clone.innerHTML;
-      localStorage.setItem('ratan_portfolio_saved_html', html);
-      saveBadge.style.display = 'block'; setTimeout(()=>saveBadge.style.display='none',2000);
-    });
-
-    // RESTORE from localStorage
-    document.getElementById('restoreBtn').addEventListener('click', ()=>{
-      const html = localStorage.getItem('ratan_portfolio_saved_html');
-      if(!html){ alert('No saved version found in this browser.'); return; }
-      if(confirm('Restore saved version? This will overwrite current page content in this window (editor UI remains).')){
-        document.body.innerHTML = html;
-        // re-add editor UI and modal elements (they were removed when saving) by reloading page (simpler)
-        alert('Restored. Please reload the page to re-enable editor UI.'); location.reload();
+      try{
+        // clone documentElement and strip editor UI + password modal + hint
+        const cloneDoc = document.documentElement.cloneNode(true);
+        const eb = cloneDoc.querySelector('#editorBar'); if(eb) eb.remove();
+        const pm = cloneDoc.querySelector('#pwModal'); if(pm) pm.remove();
+        const hint = cloneDoc.querySelector('.hint'); if(hint) hint.remove();
+        cloneDoc.querySelectorAll('.selected-outline').forEach(n=>n.classList.remove('selected-outline'));
+        const doctype = '<!DOCTYPE html>\n';
+        const html = doctype + cloneDoc.outerHTML;
+        localStorage.setItem(STORAGE_KEY, html);
+        saveBadge.style.display='block'; setTimeout(()=>saveBadge.style.display='none',2000);
+      }catch(err){
+        alert('Save failed: '+err);
       }
     });
 
-    // DOWNLOAD updated HTML for GitHub
-    document.getElementById('downloadBtn').addEventListener('click', ()=>{
-      // clone document, remove editor UI and pw modal
-      const cloneDoc = document.documentElement.cloneNode(true);
-      const eb = cloneDoc.querySelector('#editorBar'); if(eb) eb.remove();
-      const pm = cloneDoc.querySelector('#pwModal'); if(pm) pm.remove();
-      const hint = cloneDoc.querySelector('.hint'); if(hint) hint.remove();
-      cloneDoc.querySelectorAll('.selected-outline').forEach(n=>n.classList.remove('selected-outline'));
-      const doctype = '<!DOCTYPE html>\n';
-      const html = doctype + cloneDoc.outerHTML;
-      const blob = new Blob([html], {type: 'text/html'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'index.html'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-      alert('Downloaded updated index.html — upload this file to your GitHub repo (overwrite existing index.html) to publish changes.');
+    /***** Restore saved HTML from localStorage (uses document.write so scripts run) *****/
+    document.getElementById('restoreBtn').addEventListener('click', ()=>{
+      const html = localStorage.getItem(STORAGE_KEY);
+      if(!html){ alert('No saved version found in this browser.'); return; }
+      if(confirm('Restore saved version? This will overwrite current page content in this window (editor UI will be re-added).')){
+        // write saved HTML (document.write replaces entire document and executes scripts)
+        document.open();
+        document.write(html);
+        document.close();
+        // no further JS in this old window will run (page is replaced). The saved HTML includes the same script, so editor will work if the saved HTML had editor UI removed then user must reopen ?edit=on. To help, we re-open with ?edit=on
+        // If saved html lacks ?edit param, adding it:
+        if(!window.location.search.includes('edit=on')) {
+          const newUrl = window.location.href.split('?')[0] + '?edit=on';
+          try{ history.replaceState(null,'',newUrl); }catch(e){}
+        }
+      }
     });
 
-    // helper rgb->hex
+    /***** Download updated index.html (clone, remove editor UI pw modal, hint) *****/
+    document.getElementById('downloadBtn').addEventListener('click', ()=>{
+      try{
+        const cloneDoc = document.documentElement.cloneNode(true);
+        const eb = cloneDoc.querySelector('#editorBar'); if(eb) eb.remove();
+        const pm = cloneDoc.querySelector('#pwModal'); if(pm) pm.remove();
+        const hint = cloneDoc.querySelector('.hint'); if(hint) hint.remove();
+        cloneDoc.querySelectorAll('.selected-outline').forEach(n=>n.classList.remove('selected-outline'));
+        const doctype = '<!DOCTYPE html>\n';
+        const html = doctype + cloneDoc.outerHTML;
+        const blob = new Blob([html], {type: 'text/html'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'index.html'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        alert('Downloaded updated index.html — upload this file to your GitHub repo (overwrite existing index.html) to publish changes.');
+      }catch(err){
+        alert('Download failed: '+err);
+      }
+    });
+
+    /***** Helper: rgb->hex *****/
     function rgbToHex(rgb){ if(!rgb) return '#000000'; if(rgb.indexOf('rgb')<0) return rgb; const nums = rgb.match(/\d+/g); if(!nums) return '#000000'; return '#'+((1<<24)+(parseInt(nums[0])<<16)+(parseInt(nums[1])<<8)+parseInt(nums[2])).toString(16).slice(1); }
 
-    // quick exit on ESC
-    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ if(sessionStorage.getItem('ratan_edit_unlocked')){ if(confirm('Exit edit mode?')){ sessionStorage.removeItem('ratan_edit_unlocked'); disableEditUI(); location.reload(); } } } });
+    /***** ESC to exit edit mode (if unlocked) *****/
+    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ if(sessionStorage.getItem(UNLOCK_KEY)){ if(confirm('Exit edit mode?')){ sessionStorage.removeItem(UNLOCK_KEY); disableEditUI(); location.reload(); } } } });
 
-    // basic button anchors
+    /***** Basic page buttons *****/
     document.getElementById('btn-projects').addEventListener('click', ()=>{document.getElementById('projects').scrollIntoView({behavior:'smooth'})});
     document.getElementById('btn-contact').addEventListener('click', ()=>{document.getElementById('contact').scrollIntoView({behavior:'smooth'})});
     document.getElementById('sendBtn').addEventListener('click', ()=>{ const name=document.getElementById('cname').value.trim(); if(!name){alert('Please enter your name');return;} alert('Thanks '+name+' — demo message sent.'); });
 
-    if(wantEdit && !sessionStorage.getItem('ratan_edit_unlocked')){ pwModal.style.display='flex'; }
+    /***** Show editor UI if unlocked at page load *****/
+    if(sessionStorage.getItem(UNLOCK_KEY)) enableEditUI();
 
-    // show editor UI if unlocked
-    function enableEditUI(){ editorBar.style.display='block'; editorBar.setAttribute('aria-hidden','false'); document.body.classList.add('edit-mode'); }
-    function disableEditUI(){ editorBar.style.display='none'; editorBar.setAttribute('aria-hidden','true'); document.body.classList.remove('edit-mode'); }
+    /***** ensure year *****/
+    try{ document.getElementById('year').textContent = new Date().getFullYear(); }catch(e){}
 
-    // if unlocked (from previous session) enable
-    if(sessionStorage.getItem('ratan_edit_unlocked')) enableEditUI();
-
-    // ensure year
-    document.getElementById('year').textContent = new Date().getFullYear();
+    /***** If user arrived with ?edit=on and already unlocked, show modal hidden state handled above *****/
   </script>
 </body>
 </html>
-
