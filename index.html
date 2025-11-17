@@ -1,459 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ratan Mandal — Portfolio</title>
-  <style>
-    :root{--bg:#0b1020;--card:#0f1724;--accent:#7c5cff;--muted:#97a0b9;--glass:rgba(255,255,255,0.04)}
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;color:#e6f0ff;background:var(--bg);position:relative;overflow-x:hidden}
-    /* Animated background (smooth moving gradient) */
-    body::before{
-      content:"";position:fixed;inset:-20%;z-index:0;pointer-events:none;
-      background:linear-gradient(120deg, rgba(124,92,255,0.18), rgba(77,211,255,0.12), rgba(45,212,191,0.08), rgba(124,92,255,0.12));
-      filter:blur(60px);transform:scale(1.1);animation:moveGradient 18s linear infinite;
-    }
-    @keyframes moveGradient{0%{transform:translate3d(-5%,0,0) scale(1.05)}50%{transform:translate3d(5%,0,0) scale(1.12)}100%{transform:translate3d(-5%,0,0) scale(1.05)}}
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Edit Mode Portfolio</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial;
+    color: white;
+    overflow-x: hidden;
 
-    header{position:relative;z-index:3;padding:20px 6%;display:flex;align-items:center;justify-content:space-between}
-    .logo{font-weight:700;font-size:20px}
-    nav a{color:var(--muted);margin-left:18px;text-decoration:none;font-weight:600}
-    nav a:hover{color:var(--accent)}
-    main{position:relative;z-index:2;padding:60px 6%;min-height:100vh;display:grid;grid-template-columns:1fr 420px;gap:40px;align-items:center}
-    .hero h1{font-size:48px;line-height:1.02;margin-bottom:12px}
-    .hero p{color:var(--muted);font-size:18px;margin-bottom:18px}
-    .cta{display:flex;gap:12px}
-    .btn{background:linear-gradient(90deg,var(--accent),#4ad0ff);border:none;padding:12px 18px;border-radius:10px;color:#021028;font-weight:700;cursor:pointer}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));padding:22px;border-radius:14px;backdrop-filter: blur(6px);box-shadow:0 6px 20px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.04)}
-    .avatar{width:100%;height:220px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,var(--accent),#2dd4bf);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#021028}
-    section{padding:60px 6%}
-    .section-head{display:flex;align-items:center;gap:16px;margin-bottom:18px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-    .skill{background:var(--card);padding:14px;border-radius:10px}
-    .project{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:10px}
-    footer{padding:30px 6%;text-align:center;color:var(--muted)}
-    @media (max-width:980px){main{grid-template-columns:1fr;gap:24px;padding-top:120px}.avatar{height:180px}}
+    /* Default Animated Gradient */
+    background: linear-gradient(130deg, #ff0077, #4200ff, #00d4ff);
+    background-size: 600% 600%;
+    animation: gradientMove 15s infinite alternate ease-in-out;
+  }
 
-    /* Editor UI */
-    .editor-bar{position:fixed;right:18px;top:80px;width:360px;background:rgba(5,7,15,0.95);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);z-index:9999;color:var(--muted);display:none;box-shadow:0 10px 40px rgba(2,6,23,0.6)}
-    .editor-bar h4{margin:6px 0 8px;font-size:15px;color:#fff}
-    .editor-bar label{font-size:13px;color:var(--muted);display:block;margin-top:8px}
-    .editor-bar input[type="text"],.editor-bar input[type="color"],.editor-bar input[type="url"],.editor-bar select,.editor-bar textarea{width:100%;padding:8px;border-radius:6px;border:none;margin-top:6px;background:rgba(255,255,255,0.03);color:inherit}
-    .editor-bar textarea{height:80px}
-    .editor-bar button{margin-top:10px;padding:8px 10px;border-radius:8px;border:none;cursor:pointer;background:var(--accent);color:#021028;font-weight:700}
-    .selected-outline{box-shadow:0 0 0 3px rgba(124,92,255,0.18) !important}
-    .hint{position:fixed;left:16px;bottom:16px;background:var(--glass);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);z-index:6;color:var(--muted);font-size:13px}
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 
-    /* Password modal */
-    .pw-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:10000}
-    .pw-box{background:#071024;padding:18px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);width:380px}
-    .pw-box input{width:100%;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit}
-    .pw-box button{margin-top:10px;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#021028;font-weight:700}
+  /* Content */
+  .container {
+    padding: 40px;
+  }
 
-    /* small helper for saved badge */
-    .save-badge{position:fixed;right:18px;bottom:18px;background:#173047;padding:8px 12px;border-radius:8px;color:#bfe0ff;font-size:13px;z-index:9999;display:none}
-  </style>
+  /* EDITOR PANEL */
+  #editorPanel {
+    position: fixed;
+    top: 50%;
+    right: -320px;
+    transform: translateY(-50%);
+    width: 300px;
+    background: #111;
+    padding: 20px;
+    border-left: 3px solid #00d4ff;
+    transition: 0.3s ease;
+    z-index: 9999;
+  }
+  #editorPanel.open { right: 0; }
+
+  #editorPanel input,
+  #editorPanel textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    background: #222;
+    border: 1px solid #555;
+    color: white;
+  }
+
+  #editorPanel button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    background: #00d4ff;
+    border: none;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  /* Upload BG Button */
+  #bgPreview {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    margin-top: 10px;
+    display: none;
+  }
+
+  .edit-highlight {
+    outline: 2px dashed yellow;
+  }
+</style>
 </head>
+
 <body>
-  <header>
-    <div class="logo">Ratan Mandal</div>
-    <nav>
-      <a href="#about">About</a>
-      <a href="#skills">Skills</a>
-      <a href="#projects">Projects</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
 
-  <main>
-    <div class="hero">
-      <div>
-        <h1 id="hero-name">Hi, I'm <span id="hero-name-accent" style="color:var(--accent)">Ratan Mandal</span></h1>
-        <p id="hero-desc">I build interactive, polished interfaces. Front-end developer • UI/UX</p>
-        <div class="cta">
-          <button class="btn" id="btn-projects">See Projects</button>
-          <button class="btn" id="btn-contact">Hire Me</button>
-        </div>
-        <div style="margin-top:20px;color:var(--muted)">
-          <span style="margin-right:18px">⭐ Open to work</span>
-          <span>🧭 Based in India</span>
-        </div>
-      </div>
-    </div>
-
-    <aside class="card">
-      <div class="avatar" id="avatar">RM</div>
-      <div class="meta">
-        <div class="title" id="meta-title">Ratan Mandal</div>
-        <div class="sub" id="meta-sub">Digital Marketer</div>
-      </div>
-
-      <div style="margin-top:14px;color:var(--muted)">
-        <div><strong>Location:</strong> <span id="meta-loc">India</span></div>
-        <div><strong>Email:</strong> <span id="meta-email">aryaratan38@gmail.com</span></div>
-        <div style="margin-top:10px;display:flex;gap:8px">
-          <a id="link-github" href="#" style="text-decoration:none;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:700">GitHub</a>
-          <a id="link-linkedin" href="#" style="text-decoration:none;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:700">LinkedIn</a>
-        </div>
-      </div>
-    </aside>
-  </main>
-
-  <section id="about">
-    <div class="section-head"><h2 id="about-title">About</h2></div>
-    <p id="about-text">I'm a designer-developer who enjoys crafting buttery smooth UI and tiny delightful animations.</p>
-  </section>
-
-  <section id="skills">
-    <div class="section-head"><h2 id="skills-title">Skills</h2></div>
-    <div class="grid" id="skills-grid">
-      <div class="skill">HTML &amp; CSS</div>
-      <div class="skill">JavaScript (ES6+)</div>
-      <div class="skill">React &amp; Vite</div>
-      <div class="skill">Three.js / WebGL</div>
-      <div class="skill">UI / UX Design</div>
-      <div class="skill">Git &amp; GitHub</div>
-    </div>
-  </section>
-
-  <section id="projects">
-    <div class="section-head"><h2 id="projects-title">Projects</h2></div>
-    <div class="grid" id="projects-grid">
-      <div class="project"><h3>3D Landing — Interactive</h3><p>WebGL landing with 3D particles and custom shader-driven neon look.</p></div>
-      <div class="project"><h3>Design System</h3><p>Reusable components, tokens and responsive patterns for fast UI development.</p></div>
-      <div class="project"><h3>Portfolio Site</h3><p>Case studies, animations and micro-interactions with GSAP &amp; Three.js.</p></div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="section-head"><h2 id="contact-title">Contact</h2></div>
-    <div class="card" style="max-width:720px;margin:0 auto">
-      <form id="contact-form">
-        <div style="display:flex;gap:12px;margin-bottom:10px">
-          <input id="cname" name="name" placeholder="Your name" style="flex:1;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit" />
-          <input id="cemail" name="email" placeholder="Your email" style="flex:1;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit" />
-        </div>
-        <textarea id="cmsg" name="message" placeholder="Message" style="width:100%;height:120px;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit"></textarea>
-        <div style="text-align:right;margin-top:12px"><button class="btn" type="button" id="sendBtn">Send Message</button></div>
-      </form>
-    </div>
-  </section>
-
-  <footer>
-    © <span id="year"></span> Ratan Mandal — Built with ❤️
-  </footer>
-
-  <div class="hint">Tip: Open <code>?edit=on</code> and enter your password to unlock the editor.</div>
-
-  <!-- Editor bar -->
-  <div class="editor-bar" id="editorBar" aria-hidden="true">
-    <h4>Edit Mode</h4>
-    <div><strong>Selected:</strong> <span id="selName">none</span></div>
-
-    <label>Text / HTML</label>
-    <textarea id="editText" placeholder="Edit innerHTML"></textarea>
-
-    <label>Text Color</label>
-    <input type="color" id="editColor">
-
-    <label>Background Color</label>
-    <input type="color" id="editBgColor">
-
-    <label>Set link (for &lt;a&gt;)</label>
-    <input type="url" id="editHref" placeholder="https://example.com">
-
-    <label>Replace image</label>
-    <input type="file" id="editImage" accept="image/*">
-
-    <label>Add social link</label>
-    <input type="url" id="newSocialUrl" placeholder="https://instagram.com/yourprofile">
-    <select id="newSocialType"><option value="github">GitHub</option><option value="linkedin">LinkedIn</option><option value="instagram">Instagram</option><option value="twitter">Twitter</option></select>
-
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-      <button id="applyBtn">Apply</button>
-      <button id="saveLocalBtn" style="background:#2dd4bf;">Save (Local)</button>
-      <button id="downloadBtn" style="background:#6fc3ff;">Download HTML</button>
-      <button id="restoreBtn" style="background:#f3a76b;">Restore Saved</button>
-      <button id="exitBtn" style="background:#ff7b7b;">Exit Edit Mode</button>
-    </div>
-
-    <div style="margin-top:8px;font-size:12px;color:var(--muted)">Tip: Click any element to select it. Edits apply live. Use "Save (Local)" to persist edits in this browser. Use "Download HTML" to get updated file for GitHub.</div>
+<!-- 🔥 CONTENT (editable) -->
+<div class="container">
+  <h1 data-edit>My Portfolio</h1>
+  <p data-edit>Welcome to my editable website. Click any text to edit me.</p>
+  <div data-edit>
+    <h2>About Me</h2>
+    <p>I am a web developer who loves animations and editing tools.</p>
   </div>
-
-  <!-- Password modal -->
-  <div class="pw-modal" id="pwModal" style="display:none">
-    <div class="pw-box">
-      <div style="color:var(--muted);margin-bottom:8px">Enter edit password to unlock editing</div>
-      <input id="pwInput" type="password" placeholder="Password">
-      <button id="pwSubmit">Unlock</button>
-      <div id="pwMsg" style="color:#ffb3b3;margin-top:8px;display:none"></div>
-    </div>
+  <div data-edit>
+    <h2>Projects</h2>
+    <p>Project details will go here...</p>
   </div>
+  <div data-edit>
+    <h2>Contact</h2>
+    <p>Email: example@mail.com</p>
+  </div>
+</div>
 
-  <div class="save-badge" id="saveBadge">Saved locally</div>
+<!-- 🔥 EDITOR PANEL -->
+<div id="editorPanel">
+  <h3>Edit Content</h3>
+  <textarea id="editorText" rows="6"></textarea>
 
-  <script>
-    /***** CONFIG *****/
-    // store SHA-256 of the allowed password (hex). This is safer than putting the plain password in JS.
-    // (Hash of your password was computed and embedded here)
-    const EDIT_PASSWORD_HASH = 'e1286e53eebe6f8cadc341cc72096adad4ec8040f16b476016f21d8e1d558dfc';
+  <button id="saveChange">Apply Change</button>
+  <button id="saveBrowser">Save to Browser</button>
+  <button id="downloadHTML">Download HTML</button>
+  <button id="restoreDefault">Restore Default</button>
 
-    /***** UTIL: SHA-256 (returns hex) *****/
-    async function sha256hex(str) {
-      const enc = new TextEncoder();
-      const data = enc.encode(str);
-      const hash = await crypto.subtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hash));
-      return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
-    }
+  <hr color="#333">
 
-    /***** UI refs *****/
-    const urlParams = new URLSearchParams(window.location.search);
-    const wantEdit = urlParams.get('edit') === 'on';
-    const pwModal = document.getElementById('pwModal');
-    const editorBar = document.getElementById('editorBar');
-    const saveBadge = document.getElementById('saveBadge');
-    const selNameEl = document.getElementById('selName');
-    const editText = document.getElementById('editText');
-    const editColor = document.getElementById('editColor');
-    const editBgColor = document.getElementById('editBgColor');
-    const editHref = document.getElementById('editHref');
-    const editImage = document.getElementById('editImage');
-    const newSocialUrl = document.getElementById('newSocialUrl');
-    const newSocialType = document.getElementById('newSocialType');
+  <h3>Background Animation</h3>
+  <input type="file" id="bgUpload" accept="video/*,image/gif" />
+  <video id="bgPreview" autoplay loop muted></video>
+</div>
 
-    /***** STATE *****/
-    let selected = null;
-    const STORAGE_KEY = 'ratan_portfolio_saved_fullhtml';
-    const UNLOCK_KEY = 'ratan_edit_unlocked';
+<script>
+let selectedElement = null;
 
-    /***** Show/hide Editor UI *****/
-    function showPw(){ pwModal.style.display='flex'; }
-    function hidePw(){ pwModal.style.display='none'; }
-    function enableEditUI(){ editorBar.style.display='block'; editorBar.setAttribute('aria-hidden','false'); document.body.classList.add('edit-mode'); }
-    function disableEditUI(){ editorBar.style.display='none'; editorBar.setAttribute('aria-hidden','true'); document.body.classList.remove('edit-mode'); clearSelection(); }
+/* CLICK TO EDIT */
+document.querySelectorAll("[data-edit]").forEach(el => {
+  el.addEventListener("click", () => {
+    selectedElement = el;
+    document.querySelectorAll("[data-edit]").forEach(x => x.classList.remove("edit-highlight"));
+    el.classList.add("edit-highlight");
 
-    /***** Init: if ?edit=on then ask pw (unless unlocked) *****/
-    if(wantEdit && !sessionStorage.getItem(UNLOCK_KEY)){ showPw(); }
-    if(sessionStorage.getItem(UNLOCK_KEY)) enableEditUI();
+    document.getElementById("editorText").value = el.innerHTML;
+    document.getElementById("editorPanel").classList.add("open");
+  });
+});
 
-    document.getElementById('pwSubmit').addEventListener('click', async ()=>{
-      const v = document.getElementById('pwInput').value || '';
-      const hv = await sha256hex(v);
-      if(hv === EDIT_PASSWORD_HASH){
-        sessionStorage.setItem(UNLOCK_KEY,'1');
-        hidePw();
-        enableEditUI();
-        alert('Edit mode unlocked — Click any element to select and edit.');
-      } else {
-        const m = document.getElementById('pwMsg'); m.style.display='block'; m.textContent='Wrong password';
-      }
-    });
+/* LIVE APPLY */
+document.getElementById("editorText").addEventListener("input", () => {
+  if (selectedElement) {
+    selectedElement.innerHTML = document.getElementById("editorText").value;
+  }
+});
 
-    document.getElementById('exitBtn').addEventListener('click', ()=>{ sessionStorage.removeItem(UNLOCK_KEY); disableEditUI(); alert('Edit mode exited. Reopen with ?edit=on to unlock again.'); });
+/* BUTTON: Apply (same as live) */
+document.getElementById("saveChange").onclick = () => {
+  if (selectedElement) {
+    selectedElement.innerHTML = document.getElementById("editorText").value;
+  }
+};
 
-    /***** Selection handling *****/
-    function clearSelection(){
-      if(selected){ selected.classList.remove('selected-outline'); }
-      selected = null;
-      selNameEl.textContent='none';
-      editText.value=''; editHref.value=''; editImage.value=''; editColor.value='#ffffff'; editBgColor.value='#000000';
-    }
+/* SAVE TO BROWSER */
+document.getElementById("saveBrowser").onclick = () => {
+  localStorage.setItem("savedPage", document.body.innerHTML);
+  alert("Saved successfully!");
+};
 
-    // click to select (only when unlocked)
-    document.addEventListener('click', (e)=>{
-      if(!sessionStorage.getItem(UNLOCK_KEY)) return;
-      // ignore clicks inside editor UI and password modal
-      if(e.target.closest('.editor-bar') || e.target.closest('.pw-box')) return;
-      // ignore clicks on file-download link created by script etc
-      // do not prevent default (so normal link behavior still works)
-      const el = e.target;
-      if(selected) selected.classList.remove('selected-outline');
-      selected = el;
-      selected.classList.add('selected-outline');
-      selNameEl.textContent = selected.tagName.toLowerCase() + (selected.id?('#'+selected.id):'');
-      // populate edit controls based on element type
-      const tag = selected.tagName.toLowerCase();
-      // innerHTML for most, value for inputs
-      if(tag === 'input' || tag === 'textarea'){
-        editText.value = selected.value || '';
-      } else {
-        editText.value = selected.innerHTML.replace(/\n/g,'');
-      }
-      // color and bg
-      try{ const cs = window.getComputedStyle(selected); editColor.value = rgbToHex(cs.color || '#ffffff'); editBgColor.value = rgbToHex(cs.backgroundColor || '#000000'); }catch(err){}
-      // href for anchors
-      if(tag === 'a') editHref.value = selected.href || '';
-      else editHref.value = '';
-      // clear image file input
-      editImage.value = '';
-    }, true);
+/* RESTORE */
+document.getElementById("restoreDefault").onclick = () => {
+  localStorage.removeItem("savedPage");
+  location.reload();
+};
 
-    /***** Live apply while typing in editor controls *****/
-    // Text area live update
-    editText.addEventListener('input', ()=>{
-      if(!selected) return;
-      const tag = selected.tagName.toLowerCase();
-      try{
-        if(tag === 'input' || tag === 'textarea'){
-          selected.value = editText.value;
-        } else {
-          selected.innerHTML = editText.value;
-        }
-      }catch(err){}
-    });
+/* LOAD SAVED */
+window.onload = () => {
+  let saved = localStorage.getItem("savedPage");
+  if (saved) document.body.innerHTML = saved;
+};
 
-    // color and background live update
-    editColor.addEventListener('input', ()=>{ if(!selected) return; selected.style.color = editColor.value; });
-    editBgColor.addEventListener('input', ()=>{ if(!selected) return; selected.style.backgroundColor = editBgColor.value; });
+/* DOWNLOAD HTML */
+document.getElementById("downloadHTML").onclick = () => {
+  const blob = new Blob([document.documentElement.outerHTML], { type: "text/html" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "edited_page.html";
+  a.click();
+};
 
-    // href live
-    editHref.addEventListener('input', ()=>{ if(!selected) return; if(selected.tagName.toLowerCase() === 'a'){ selected.href = editHref.value; } });
+/* UPLOAD CUSTOM ANIMATION BG */
+document.getElementById("bgUpload").addEventListener("change", e => {
+  let file = e.target.files[0];
+  if (!file) return;
 
-    // image preview on file select (not auto-applied until Apply pressed)
-    let pendingImageDataURL = null;
-    editImage.addEventListener('change', (ev)=>{
-      const f = ev.target.files[0];
-      if(!f) { pendingImageDataURL = null; return; }
-      const reader = new FileReader();
-      reader.onload = (e)=>{ pendingImageDataURL = e.target.result; };
-      reader.readAsDataURL(f);
-    });
+  let url = URL.createObjectURL(file);
 
-    /***** Apply button (applies any pending image and social link additions too) *****/
-    document.getElementById('applyBtn').addEventListener('click', ()=>{
-      if(!selected){ alert('Select an element first by clicking it on the page.'); return; }
-      const txt = editText.value;
-      const color = editColor.value;
-      const bg = editBgColor.value;
-      const href = editHref.value;
-      try{
-        const tag = selected.tagName.toLowerCase();
-        if(tag === 'input' || tag === 'textarea'){ selected.value = txt; } else { selected.innerHTML = txt; }
-        selected.style.color = color;
-        selected.style.backgroundColor = bg;
-        if(href && tag === 'a'){ selected.href = href; }
-        if(pendingImageDataURL){
-          if(selected.tagName.toLowerCase() === 'img'){ selected.src = pendingImageDataURL; }
-          else {
-            const img = selected.querySelector('img');
-            if(img) img.src = pendingImageDataURL;
-            else {
-              // insert image preserving text
-              selected.innerHTML = '<img src="'+pendingImageDataURL+'" style="max-width:100%;height:auto;border-radius:8px">';
-            }
-          }
-          pendingImageDataURL = null;
-          editImage.value = '';
-        }
-        // add/update social link
-        const newSocial = newSocialUrl.value.trim();
-        const type = newSocialType.value;
-        if(newSocial){
-          if(type === 'github'){ document.getElementById('link-github').href = newSocial; document.getElementById('link-github').textContent = 'GitHub'; }
-          if(type === 'linkedin'){ document.getElementById('link-linkedin').href = newSocial; document.getElementById('link-linkedin').textContent = 'LinkedIn'; }
-          if(type === 'instagram'){ // create link if not exist
-            let a = document.querySelector('#link-instagram');
-            if(!a){
-              a = document.createElement('a'); a.id='link-instagram'; a.style.padding='8px 10px'; a.style.borderRadius='8px'; a.style.background='rgba(255,255,255,0.02)'; a.style.color='var(--muted)'; a.style.fontWeight='700'; a.style.textDecoration='none';
-              a.textContent='Instagram';
-              document.querySelector('.meta').appendChild(a);
-            }
-            a.href = newSocial;
-          }
-          if(type === 'twitter'){
-            let a = document.querySelector('#link-twitter');
-            if(!a){
-              a = document.createElement('a'); a.id='link-twitter'; a.style.padding='8px 10px'; a.style.borderRadius='8px'; a.style.background='rgba(255,255,255,0.02)'; a.style.color='var(--muted)'; a.style.fontWeight='700'; a.style.textDecoration='none';
-              a.textContent='Twitter';
-              document.querySelector('.meta').appendChild(a);
-            }
-            a.href = newSocial;
-          }
-          newSocialUrl.value = '';
-        }
+  document.body.style.background = "none";
+  document.body.style.backgroundColor = "black";
 
-        alert('Applied changes to selected element. Use "Save (Local)" to persist edits in this browser or "Download HTML" to save file for GitHub.');
-      }catch(err){
-        console.error(err);
-        alert('Could not apply changes to this element.');
-      }
-    });
+  let vid = document.getElementById("bgPreview");
+  vid.src = url;
+  vid.style.display = "block";
 
-    /***** Save full HTML to localStorage (includes doctype) *****/
-    document.getElementById('saveLocalBtn').addEventListener('click', ()=>{
-      try{
-        // clone documentElement and strip editor UI + password modal + hint
-        const cloneDoc = document.documentElement.cloneNode(true);
-        const eb = cloneDoc.querySelector('#editorBar'); if(eb) eb.remove();
-        const pm = cloneDoc.querySelector('#pwModal'); if(pm) pm.remove();
-        const hint = cloneDoc.querySelector('.hint'); if(hint) hint.remove();
-        cloneDoc.querySelectorAll('.selected-outline').forEach(n=>n.classList.remove('selected-outline'));
-        const doctype = '<!DOCTYPE html>\n';
-        const html = doctype + cloneDoc.outerHTML;
-        localStorage.setItem(STORAGE_KEY, html);
-        saveBadge.style.display='block'; setTimeout(()=>saveBadge.style.display='none',2000);
-      }catch(err){
-        alert('Save failed: '+err);
-      }
-    });
+  vid.style.position = "fixed";
+  vid.style.top = "0";
+  vid.style.left = "0";
+  vid.style.width = "100vw";
+  vid.style.height = "100vh";
+  vid.style.objectFit = "cover";
+  vid.style.zIndex = "-1";
+});
+</script>
 
-    /***** Restore saved HTML from localStorage (uses document.write so scripts run) *****/
-    document.getElementById('restoreBtn').addEventListener('click', ()=>{
-      const html = localStorage.getItem(STORAGE_KEY);
-      if(!html){ alert('No saved version found in this browser.'); return; }
-      if(confirm('Restore saved version? This will overwrite current page content in this window (editor UI will be re-added).')){
-        // write saved HTML (document.write replaces entire document and executes scripts)
-        document.open();
-        document.write(html);
-        document.close();
-        // no further JS in this old window will run (page is replaced). The saved HTML includes the same script, so editor will work if the saved HTML had editor UI removed then user must reopen ?edit=on. To help, we re-open with ?edit=on
-        // If saved html lacks ?edit param, adding it:
-        if(!window.location.search.includes('edit=on')) {
-          const newUrl = window.location.href.split('?')[0] + '?edit=on';
-          try{ history.replaceState(null,'',newUrl); }catch(e){}
-        }
-      }
-    });
-
-    /***** Download updated index.html (clone, remove editor UI pw modal, hint) *****/
-    document.getElementById('downloadBtn').addEventListener('click', ()=>{
-      try{
-        const cloneDoc = document.documentElement.cloneNode(true);
-        const eb = cloneDoc.querySelector('#editorBar'); if(eb) eb.remove();
-        const pm = cloneDoc.querySelector('#pwModal'); if(pm) pm.remove();
-        const hint = cloneDoc.querySelector('.hint'); if(hint) hint.remove();
-        cloneDoc.querySelectorAll('.selected-outline').forEach(n=>n.classList.remove('selected-outline'));
-        const doctype = '<!DOCTYPE html>\n';
-        const html = doctype + cloneDoc.outerHTML;
-        const blob = new Blob([html], {type: 'text/html'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = 'index.html'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-        alert('Downloaded updated index.html — upload this file to your GitHub repo (overwrite existing index.html) to publish changes.');
-      }catch(err){
-        alert('Download failed: '+err);
-      }
-    });
-
-    /***** Helper: rgb->hex *****/
-    function rgbToHex(rgb){ if(!rgb) return '#000000'; if(rgb.indexOf('rgb')<0) return rgb; const nums = rgb.match(/\d+/g); if(!nums) return '#000000'; return '#'+((1<<24)+(parseInt(nums[0])<<16)+(parseInt(nums[1])<<8)+parseInt(nums[2])).toString(16).slice(1); }
-
-    /***** ESC to exit edit mode (if unlocked) *****/
-    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ if(sessionStorage.getItem(UNLOCK_KEY)){ if(confirm('Exit edit mode?')){ sessionStorage.removeItem(UNLOCK_KEY); disableEditUI(); location.reload(); } } } });
-
-    /***** Basic page buttons *****/
-    document.getElementById('btn-projects').addEventListener('click', ()=>{document.getElementById('projects').scrollIntoView({behavior:'smooth'})});
-    document.getElementById('btn-contact').addEventListener('click', ()=>{document.getElementById('contact').scrollIntoView({behavior:'smooth'})});
-    document.getElementById('sendBtn').addEventListener('click', ()=>{ const name=document.getElementById('cname').value.trim(); if(!name){alert('Please enter your name');return;} alert('Thanks '+name+' — demo message sent.'); });
-
-    /***** Show editor UI if unlocked at page load *****/
-    if(sessionStorage.getItem(UNLOCK_KEY)) enableEditUI();
-
-    /***** ensure year *****/
-    try{ document.getElementById('year').textContent = new Date().getFullYear(); }catch(e){}
-
-    /***** If user arrived with ?edit=on and already unlocked, show modal hidden state handled above *****/
-  </script>
 </body>
 </html>
