@@ -3,108 +3,78 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Portfolio — Juan Pablo (Replica)</title>
+  <title>Portfolio — Replica</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="bg-wrap">
-    <header class="nav">
-      <div class="container nav-inner">
-        <div class="brand">
-          <div class="logo">○</div>
-          <div class="brand-name" data-key="brandName" contenteditable="false">Juan Pablo</div>
-        </div>
-        <nav class="menu">
-          <a href="#about" data-key="navAbout" contenteditable="false">About Me</a>
-          <a href="#projects" data-key="navProjects" contenteditable="false">Projects</a>
-          <a href="#experience" data-key="navExperience" contenteditable="false">Experiences</a>
-          <a href="#testimonials" data-key="navTestimonials" contenteditable="false">Testimonials</a>
-          <a href="#faq" data-key="navFAQ" contenteditable="false">FAQ</a>
-        </nav>
-        <button class="btn-outline" data-key="getInTouch" contenteditable="false">Get in Touch</button>
+    <header class="nav container">
+      <div class="brand">
+        <div class="logo">○</div>
+        <div class="brand-name" data-key="brandName">Juan Pablo</div>
+      </div>
+      <nav class="menu">
+        <a href="#about" data-key="navAbout">About</a>
+        <a href="#projects" data-key="navProjects">Projects</a>
+        <a href="#contact" data-key="navContact">Contact</a>
+      </nav>
+      <!-- Edit button hidden for public -->
+      <div class="nav-actions">
+        <a class="admin-link" href="admin.html" title="Admin (you)">Admin</a>
       </div>
     </header>
 
     <main>
-      <!-- HERO -->
+      <!-- Hero -->
       <section class="hero container">
         <div class="hero-left">
-          <h1 class="hero-title" data-key="heroTitle" contenteditable="false">
-            Collaboration & <br/> Success is the Key
-          </h1>
+          <h1 class="hero-title" data-key="heroTitle">Collaboration &amp; Success is the Key</h1>
+          <p class="hero-sub" data-key="heroDesc">The success of collaboration is my priority on every project I work on.</p>
+          <div class="hero-cta">
+            <a class="btn-primary" href="#contact" data-key="ctaBtn">Get in Touch</a>
+          </div>
         </div>
-        <div class="hero-right">
-          <p data-key="heroDesc" contenteditable="false">
-            The success of the collaboration is my priority on every project I worked on.
-          </p>
+        <div class="hero-right" aria-hidden="true">
+          <!-- decorative animated shapes -->
+          <div class="device-mock">
+            <div class="mock-screen">Project Image</div>
+          </div>
         </div>
       </section>
 
-      <!-- STACKED CARDS / PROJECT -->
+      <!-- Projects stacked -->
       <section id="projects" class="projects container">
-        <div class="stack">
-          <!-- multiple white rounded cards stacked with shadow -->
-          <div class="card card-back"></div>
-          <div class="card card-mid"></div>
-          <article class="card card-front">
-            <div class="card-left">
-              <div class="device-mock" aria-hidden="true">
-                <!-- placeholder image / you can replace with <img> -->
-                <div class="mock-screen">Project Image</div>
-              </div>
-            </div>
-            <div class="card-right">
-              <span class="tag" data-key="projectTag" contenteditable="false">UI/UX Design</span>
-              <h3 class="card-title" data-key="projectTitle" contenteditable="false">Crypts - Crypto Landing Page Responsive</h3>
-              <p class="card-text" data-key="projectText" contenteditable="false">
-                It's a gateway to a world of financial opportunities and technological innovation...
-              </p>
-            </div>
-          </article>
+        <div class="stack" id="projectStack">
+          <!-- cards will be rendered by JS -->
         </div>
       </section>
 
-      <!-- FAQ / big white block sample -->
-      <section class="faq container">
-        <div class="faq-card">
-          <h2 data-key="faqQ" contenteditable="false">Are you available to work on an hourly rate or is this a project-based engagement?</h2>
-        </div>
-      </section>
-
-      <!-- CONTACT (big oversized typography + footer CTA) -->
-      <section class="contact-wrap">
+      <!-- Big Contact Oversize -->
+      <section id="contact" class="contact-wrap">
         <div class="contact-oversize">Contact Me • Contact Me • Contact Me</div>
-
         <footer class="footer container">
           <div class="contact-left">
             <div class="label">Email</div>
-            <div class="info" data-key="email" contenteditable="false">hello@juanpablo.com</div>
+            <div class="info" data-key="email">hello@juanpablo.com</div>
 
-            <div class="label">Phone Number</div>
-            <div class="info" data-key="phone" contenteditable="false">+1 (201) 895-3801</div>
+            <div class="label">Phone</div>
+            <div class="info" data-key="phone">+1 (201) 895-3801</div>
           </div>
 
           <div class="contact-right">
-            <div class="cta-text" data-key="ctaText" contenteditable="false">Send me your email to discuss new project</div>
+            <div class="cta-text" data-key="ctaText">Send me your email to discuss a project</div>
             <div class="email-cta">
               <input type="email" id="ctaEmail" placeholder="Enter your email" />
-              <button id="ctaBtn" aria-label="send email">➜</button>
+              <button id="ctaBtnInline" aria-label="send email">➜</button>
             </div>
           </div>
         </footer>
       </section>
     </main>
 
-    <!-- EDIT PANEL -->
-    <div class="edit-panel">
-      <button id="editToggle">Edit</button>
-      <button id="saveBtn" title="Save edits">Save</button>
-      <button id="resetBtn" title="Reset to defaults">Reset</button>
-    </div>
-
-    <div class="credits">© <span id="year"></span> Juan Pablo. All Rights Reserved.</div>
+    <div class="credits">© <span id="year"></span> — <span data-key="brandNameCopy">Juan Pablo</span></div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
