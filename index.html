@@ -1,179 +1,348 @@
+<!--
+  Portfolio - video-style.html
+  Editable single-file portfolio (HTML + CSS + JS)
+  How to edit: change text inside elements marked with <!-- EDIT --> comments,
+  replace images in /images folder or update src attributes.
+
+  Instructions to publish on GitHub Pages included at bottom of this file.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Editable Live Website</title>
-
-<style>
-    body {
-        margin: 0;
-        font-family: Arial;
-        color: white;
-        overflow-x: hidden;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Name — Product Designer</title>
+  <meta name="description" content="Personal portfolio" />
+  <style>
+    /* ---------- EASY EDIT VARIABLES ---------- */
+    :root{
+      --accent1: #7b4cff; /* purple */
+      --accent2: #4b2bff; /* deep purple */
+      --accent3: #1a1b2e; /* near-black */
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.75);
+      --glass: rgba(255,255,255,0.06);
+      --radius: 22px;
+      --max-width: 1200px;
     }
 
-    /* Animated Background */
-    #bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        background: linear-gradient(45deg, #ff00cc, #3333ff);
-        background-size: 400% 400%;
-        animation: animBG 10s infinite alternate ease-in-out;
-        filter: blur(2px);
+    /* ---------- Reset ---------- */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:var(--text);
+      background:linear-gradient(180deg,var(--accent2) 0%, #0f0f1a 55%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.3;
     }
 
-    @keyframes animBG {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 100% 50%; }
+    /* ---------- Page container ---------- */
+    .wrap{max-width:var(--max-width);margin:0 auto;padding:28px}
+
+    /* ---------- Top bar / nav ---------- */
+    header{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo .mark{width:38px;height:38px;border-radius:999px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700}
+    nav{display:flex;gap:18px;align-items:center}
+    nav a{color:var(--muted);text-decoration:none;padding:10px 16px;border-radius:30px;font-size:14px}
+    nav a:hover{background:var(--glass);color:var(--text)}
+    .cta{padding:10px 16px;border-radius:30px;border:1px solid rgba(255,255,255,0.2)}
+
+    /* ---------- Hero ---------- */
+    .hero{min-height:68vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 20px;position:relative;overflow:hidden}
+    .hero::after{content:'';position:absolute;inset:0;background:radial-gradient(600px 300px at 50% 10%, rgba(255,255,255,0.06), transparent 25%), radial-gradient(400px 200px at 20% 60%, rgba(255,255,255,0.03), transparent 25%);pointer-events:none}
+    h1{font-size:56px;line-height:1.02;margin-bottom:18px;font-weight:800;letter-spacing:-1px}
+    p.lead{color:var(--muted);margin-bottom:24px;font-size:16px}
+    .btn{display:inline-block;padding:14px 26px;border-radius:40px;background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 8px 30px rgba(75,43,255,0.28);text-decoration:none;color:white;font-weight:600}
+
+    /* ---------- Projects preview row ---------- */
+    .projects-row{display:flex;gap:20px;margin-top:40px;align-items:flex-end}
+    .project-card{flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:18px;padding:12px}
+    .project-card img{width:100%;height:220px;object-fit:cover;border-radius:12px}
+    .project-title{margin-top:12px;font-weight:700}
+    .project-sub{color:var(--muted);font-size:13px}
+
+    /* ---------- Sections ---------- */
+    section{padding:72px 20px}
+    .content{max-width:1100px;margin:0 auto}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+    .card{background:rgba(255,255,255,0.03);padding:20px;border-radius:14px}
+
+    /* ---------- Footer / contact ---------- */
+    footer{padding:28px 20px;text-align:center;color:var(--muted)}
+
+    /* ---------- Responsive ---------- */
+    @media (max-width:980px){
+      h1{font-size:40px}
+      .projects-row{flex-direction:row;overflow:auto}
+      .project-card{min-width:260px}
+      .grid{grid-template-columns:1fr}
     }
 
-    /* Content */
-    #content {
-        padding: 50px;
+    @media (max-width:560px){
+      header{padding:12px 0}
+      nav{display:none}
+      .menu-btn{display:block}
+      h1{font-size:30px}
+      .wrap{padding:12px}
     }
 
-    [contenteditable="true"] {
-        border: 1px dashed #fff;
-        padding: 5px;
-        border-radius: 5px;
-    }
+    /* ---------- Simple animations ---------- */
+    .fade-in{opacity:0;transform:translateY(10px);transition:opacity .6s ease, transform .6s ease}
+    .fade-in.show{opacity:1;transform:none}
 
-    /* Right Side Editor Panel */
-    #panel {
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 320px;
-        height: 100vh;
-        background: #000000cc;
-        color: white;
-        padding: 20px;
-        box-shadow: -3px 0 8px #000;
-        overflow-y: auto;
+    /* Tiny floating gradient animation behind hero text */
+    @keyframes floatgrad{
+      0%{transform:translateX(-10px) scale(1)}
+      50%{transform:translateX(10px) scale(1.03)}
+      100%{transform:translateX(-10px) scale(1)}
     }
+    .float-grad{position:absolute;left:50%;top:-40px;width:1200px;height:500px;transform:translateX(-50%);filter:blur(70px);opacity:0.9;pointer-events:none;background:linear-gradient(90deg, rgba(123,76,255,0.55), rgba(75,43,255,0.55));border-radius:40%;mix-blend-mode:screen;animation:floatgrad 8s ease-in-out infinite}
 
-    button {
-        width: 100%;
-        padding: 10px;
-        margin-top: 10px;
-        border: none;
-        background: #00c8ff;
-        color: black;
-        font-size: 16px;
-        cursor: pointer;
-        border-radius: 5px;
-    }
+    /* mobile menu */
+    .menu-btn{display:none;background:transparent;border:0;color:var(--text);font-size:18px}
+    .mobile-nav{display:none}
+    .mobile-nav.open{display:block;padding:16px 0}
+    .muted-small{color:var(--muted);font-size:13px}
 
-    textarea {
-        width: 100%;
-        height: 200px;
-    }
-</style>
+  </style>
 </head>
-
 <body>
+  <div class="float-grad" aria-hidden="true"></div>
 
-<div id="bg"></div>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <div class="mark">JV</div>
+        <div>
+          <div style="font-weight:700">Juan Pablo</div>
+          <div style="font-size:12px;color:var(--muted)">Product Designer</div>
+        </div>
+      </div>
 
-<div id="content">
-    <h1 class="editable" contenteditable="true">My Portfolio</h1>
-    <p class="editable" contenteditable="true">
-        Welcome to my editable website. Click any text to edit me.
-    </p>
+      <nav>
+        <a href="#about">About Me</a>
+        <a href="#projects">Projects</a>
+        <a href="#experience">Experience</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#faq">FAQ</a>
+        <a class="cta" href="#contact">Get In Touch</a>
+      </nav>
 
-    <h2 class="editable" contenteditable="true">About Me</h2>
-    <p class="editable" contenteditable="true">
-        I am a web developer who loves animations and editing tools.
-    </p>
+      <button class="menu-btn" id="menuBtn">☰</button>
+    </header>
 
-    <h2 class="editable" contenteditable="true">Projects</h2>
-    <p class="editable" contenteditable="true">Project details will go here...</p>
+    <!-- MOBILE NAV (shown when menu btn clicked) -->
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#about">About Me</a><br>
+      <a href="#projects">Projects</a><br>
+      <a href="#experience">Experience</a><br>
+      <a href="#testimonials">Testimonials</a><br>
+      <a href="#faq">FAQ</a><br>
+      <a class="cta" href="#contact">Get In Touch</a>
+    </div>
 
-    <h2 class="editable" contenteditable="true">Contact</h2>
-    <p class="editable" contenteditable="true">Email: example@mail.com</p>
-</div>
+    <!-- HERO -->
+    <main class="hero">
+      <div class="content">
+        <p class="muted-small" style="text-align:center">Former template for personal portfolio website</p>
+        <h1 class="fade-in show">Juan, Product Designer<br>Based in Indonesia</h1>
+        <p class="lead">I design clean, usable digital products and delightful interfaces. I focus on product clarity and measurable results.</p>
+        <div style="text-align:center">
+          <a class="btn" href="#projects">Get This Template for Free</a>
+        </div>
 
-<div id="panel">
-    <h2>Edit HTML Code</h2>
-    <textarea id="htmlBox"></textarea>
-    <button onclick="applyCode()">Apply Code</button>
+        <!-- Projects preview row - replace images in /images -->
+        <div class="projects-row" style="margin-top:36px">
+          <div class="project-card fade-in show">
+            <img src="images/project1.jpg" alt="project 1" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'340\'><rect width=\'100%\' height=\'100%\' fill=\'%23222222\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23bbbbbb\' font-size=\'20\'>Replace images/project1.jpg</text></svg>'" />
+            <div class="project-title">deCash - Budget Planner Finance App</div>
+            <div class="project-sub">Mobile App</div>
+          </div>
 
-    <button onclick="saveData()">Save to Browser</button>
-    <button onclick="downloadHTML()">Download HTML</button>
+          <div class="project-card fade-in show">
+            <img src="images/project2.jpg" alt="project 2" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'340\'><rect width=\'100%\' height=\'100%\' fill=\'%23222222\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23bbbbbb\' font-size=\'20\'>Replace images/project2.jpg</text></svg>'" />
+            <div class="project-title">Ideate - Financial News Mobile App</div>
+            <div class="project-sub">UI/UX</div>
+          </div>
 
-    <h3>Upload Animation Background</h3>
-    <input type="file" id="bgUpload" accept="video/*" />
-</div>
+          <div class="project-card fade-in show">
+            <img src="images/project3.jpg" alt="project 3" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'340\'><rect width=\'100%\' height=\'100%\' fill=\'%23222222\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23bbbbbb\' font-size=\'20\'>Replace images/project3.jpg</text></svg>'" />
+            <div class="project-title">Fluid - NFT Mobile App</div>
+            <div class="project-sub">Exploratory</div>
+          </div>
+        </div>
 
-<script>
-    let selected = null;
+      </div>
+    </main>
 
-    // Click and live-load code into editor
-    document.querySelectorAll(".editable").forEach(el => {
-        el.addEventListener("click", () => {
-            selected = el;
-            document.getElementById("htmlBox").value = el.innerHTML;
-        });
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="content">
+        <div class="grid">
+          <div>
+            <h2>About Me</h2>
+            <p class="muted-small"><!-- EDIT: Replace this paragraph with your bio -->Hi, I'm Juan — a product designer specializing in mobile apps and web experiences. I love turning complex problems into simple, beautiful interfaces.</p>
+            <p style="margin-top:10px"><!-- EDIT: Add quick bullets or highlight -->• Focus on product usability.<br>• Cross-functional design with engineers and PMs.<br>• Available for freelance and full-time roles.</p>
+          </div>
+          <div>
+            <div class="card">
+              <strong>Skills</strong>
+              <p class="muted-small" style="margin-top:8px">UX Design · UI Design · Figma · Prototyping · User Research</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        // Live editing + auto-save
-        el.addEventListener("input", () => {
-            saveData();
-        });
+    <!-- PROJECTS -->
+    <section id="projects" style="padding-top:40px;padding-bottom:40px">
+      <div class="content">
+        <h2>Selected Projects</h2>
+        <p class="muted-small">Click any project to view more (placeholder links)</p>
+
+        <div class="grid" style="margin-top:20px">
+          <!-- Project item 1 -->
+          <a class="card" href="#" style="text-decoration:none;color:inherit">
+            <img src="images/project1.jpg" alt="p1" style="width:100%;height:200px;object-fit:cover;border-radius:10px" onerror="this.style.display='none'">
+            <h3 style="margin-top:12px">deCash</h3>
+            <p class="muted-small">A budgeting app to help users track spending and savings.</p>
+          </a>
+
+          <!-- Project item 2 -->
+          <a class="card" href="#" style="text-decoration:none;color:inherit">
+            <img src="images/project2.jpg" alt="p2" style="width:100%;height:200px;object-fit:cover;border-radius:10px" onerror="this.style.display='none'">
+            <h3 style="margin-top:12px">Ideate</h3>
+            <p class="muted-small">Financial news and analytics with a clean mobile-first UI.</p>
+          </a>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <div class="content">
+        <h2>Experience</h2>
+        <div class="grid" style="margin-top:16px">
+          <div class="card">
+            <strong>Product Designer — Example Co.</strong>
+            <p class="muted-small">Jan 2021 — Present</p>
+            <p style="margin-top:8px">Worked on mobile product features, design systems, and analytics dashboards.</p>
+          </div>
+
+          <div class="card">
+            <strong>UI Designer — Studio X</strong>
+            <p class="muted-small">Jan 2019 — Dec 2020</p>
+            <p style="margin-top:8px">Led visual design and prototyping for enterprise apps.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials">
+      <div class="content">
+        <h2>Testimonials</h2>
+        <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:16px">
+          <div class="card" style="min-width:260px;flex:1">
+            <p>"Juan delivered a beautiful product that improved our onboarding conversion."</p>
+            <p class="muted-small">— Product Manager, Acme</p>
+          </div>
+
+          <div class="card" style="min-width:260px;flex:1">
+            <p>"Great design work and timely delivery."</p>
+            <p class="muted-small">— CEO, StartupCo</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <div class="content">
+        <h2>FAQ</h2>
+        <div style="margin-top:12px">
+          <details class="card"><summary style="cursor:pointer">Do you do freelance work?</summary>
+            <p class="muted-small">Yes — contact me at the link below.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" style="padding-top:40px;padding-bottom:80px">
+      <div class="content" style="text-align:center">
+        <h2>Get In Touch</h2>
+        <p class="muted-small">Email: <a href="mailto:youremail@example.com" style="color:var(--text);text-decoration:underline">youremail@example.com</a></p>
+        <p style="margin-top:14px"><a class="btn" href="mailto:youremail@example.com">Contact Me</a></p>
+      </div>
+    </section>
+
+    <footer>
+      © <!-- EDIT: CHANGE NAME --> Juan Pablo • Built with ❤️ — Replace this footer text to your name and link
+    </footer>
+
+  </div>
+
+  <script>
+    // ---------- Simple interactivity and edit notes ----------
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    menuBtn && menuBtn.addEventListener('click', ()=>{
+      mobileNav.classList.toggle('open');
     });
 
-    function applyCode() {
-        if (selected) {
-            selected.innerHTML = document.getElementById("htmlBox").value;
-            saveData();
+    // Reveal fade-in elements on scroll
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting) e.target.classList.add('show');
+      });
+    },{threshold:0.12});
+
+    document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+
+    // Smooth anchor scroll for modern browsers
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click',(e)=>{
+        const href = a.getAttribute('href');
+        if(href.startsWith('#')){
+          e.preventDefault();
+          const el = document.querySelector(href);
+          if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
         }
-    }
+      })
+    })
 
-    // Save to LocalStorage
-    function saveData() {
-        let data = [];
-        document.querySelectorAll(".editable").forEach(el => {
-            data.push(el.innerHTML);
-        });
-        localStorage.setItem("liveContent", JSON.stringify(data));
-    }
+    /* ---------- QUICK EDIT GUIDE ----------
+      - Change your name in the header: find <div class="mark"> and next text 'Juan Pablo'.
+      - Change main headline: the H1 inside main.hero
+      - Replace project images: put your images into folder /images named project1.jpg etc
+      - Edit bio & skills: section #about
+      - Update contact email: search for youremail@example.com
+      - Colors: edit :root variables --accent1, --accent2, --accent3
+    */
 
-    // Restore on load
-    window.onload = () => {
-        let saved = localStorage.getItem("liveContent");
-        if (saved) {
-            let arr = JSON.parse(saved);
-            document.querySelectorAll(".editable").forEach((el, i) => {
-                el.innerHTML = arr[i];
-            });
-        }
-    };
+    // Small helper: make project cards click open (placeholder behavior)
+    document.querySelectorAll('.project-card').forEach(card=>{
+      card.style.cursor='pointer';
+      card.addEventListener('click',()=>alert('Replace with real project link or modal.'))
+    })
+  </script>
 
-    // Download full page
-    function downloadHTML() {
-        const source = document.documentElement.outerHTML;
-        const file = new Blob([source], { type: "text/html" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(file);
-        a.download = "website.html";
-        a.click();
-    }
+  <!--
+    ---------- PUBLISH ON GITHUB PAGES (quick steps) ----------
+    1. Create a new repository on Github (e.g. username.github.io or any name).
+    2. Clone it locally or upload this file as index.html in the repository root.
+    3. Commit and push. In repository Settings -> Pages set branch: main (root) and save.
+    4. Your site will be available at https://username.github.io/repository-name OR for username.github.io repo: https://username.github.io
 
-    // Upload Background animation (video)
-    document.getElementById("bgUpload").addEventListener("change", (e) => {
-        let file = e.target.files[0];
-        if (file) {
-            let url = URL.createObjectURL(file);
-            document.getElementById("bg").style.background = "none";
-            document.getElementById("bg").innerHTML =
-                `<video src="${url}" autoplay loop muted style="width:100%;height:100%;object-fit:cover;"></video>`;
-        }
-    });
-</script>
-
+    OPTIONAL: Create folder /images in the repo and add your image files named project1.jpg, project2.jpg, project3.jpg.
+  -->
 </body>
 </html>
