@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Edit Portfolio</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* admin-specific small styles */
+    .admin-wrap{max-width:900px;margin:36px auto;padding:24px;background:rgba(255,255,255,0.03);border-radius:12px}
+    .admin-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    label{min-width:140px;color:#fff;opacity:.9}
+    input[type="text"], textarea, select{flex:1;padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.04);color:#fff}
+    .btn{padding:10px 14px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;cursor:pointer}
+    .danger{background:transparent;border:1px solid rgba(255,255,255,0.12)}
+    .projects-editor{margin-top:12px}
+    .project-item{padding:10px;border-radius:10px;background:rgba(0,0,0,0.08);margin-bottom:10px}
+  </style>
+</head>
+<body>
+  <div style="padding:18px;color:#fff">
+    <div class="admin-wrap">
+      <h2>Admin — Portfolio Editor</h2>
+      <div id="loginBox">
+        <p>Enter admin password to continue.</p>
+        <div class="admin-row">
+          <input id="adminPass" type="password" placeholder="Password" />
+          <button id="loginBtn" class="btn">Login</button>
+        </div>
+        <div style="opacity:.8;font-size:13px">Hint: password is the one you provided earlier.</div>
+      </div>
+
+      <div id="editor" style="display:none">
+        <div class="admin-row">
+          <label>Brand name</label><input id="f_brandName" type="text" />
+        </div>
+        <div class="admin-row">
+          <label>Hero title</label><input id="f_heroTitle" type="text" />
+        </div>
+        <div class="admin-row">
+          <label>Hero description</label><input id="f_heroDesc" type="text" />
+        </div>
+        <div class="admin-row">
+          <label>CTA button text</label><input id="f_ctaBtn" type="text" />
+        </div>
+
+        <div class="projects-editor">
+          <h3>Projects</h3>
+          <div id="projectsList"></div>
+          <button id="addProject" class="btn">+ Add Project</button>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:8px">
+          <button id="saveBtn" class="btn">Save</button>
+          <button id="exportBtn" class="btn">Export JSON</button>
+          <button id="resetBtn" class="btn danger">Reset Defaults</button>
+        </div>
+
+        <div style="margin-top:16px;color:rgba(255,255,255,0.75)">
+          <p><strong>Notes:</strong> Save stores changes to your browser's localStorage. To make changes permanent on GitHub, download the exported JSON and update files manually or edit code in your repo.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
