@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Portfolio — Replica</title>
+  <title>Portfolio — Animated Replica</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="bg-wrap">
-    <header class="nav container">
+    <header class="nav container" id="siteHeader">
       <div class="brand">
         <div class="logo">○</div>
         <div class="brand-name" data-key="brandName">Juan Pablo</div>
@@ -18,45 +18,42 @@
         <a href="#projects" data-key="navProjects">Projects</a>
         <a href="#contact" data-key="navContact">Contact</a>
       </nav>
-      <!-- Edit button hidden for public -->
       <div class="nav-actions">
         <a class="admin-link" href="admin.html" title="Admin (you)">Admin</a>
       </div>
     </header>
 
     <main>
-      <!-- Hero -->
-      <section class="hero container">
+      <!-- HERO -->
+      <section class="hero container" id="heroSection">
         <div class="hero-left">
           <h1 class="hero-title" data-key="heroTitle">Collaboration &amp; Success is the Key</h1>
-          <p class="hero-sub" data-key="heroDesc">The success of collaboration is my priority on every project I work on.</p>
+          <p class="hero-sub" data-key="heroDesc">The success of the collaboration is my priority on every project I work on.</p>
           <div class="hero-cta">
             <a class="btn-primary" href="#contact" data-key="ctaBtn">Get in Touch</a>
           </div>
         </div>
         <div class="hero-right" aria-hidden="true">
-          <!-- decorative animated shapes -->
-          <div class="device-mock">
+          <div class="device-mock floating">
             <div class="mock-screen">Project Image</div>
           </div>
         </div>
       </section>
 
-      <!-- Projects stacked -->
+      <!-- PROJECTS STACK -->
       <section id="projects" class="projects container">
-        <div class="stack" id="projectStack">
-          <!-- cards will be rendered by JS -->
+        <div class="stack" id="projectStack" aria-live="polite">
+          <!-- JS will render layered cards here -->
         </div>
       </section>
 
-      <!-- Big Contact Oversize -->
+      <!-- CONTACT with oversize typography -->
       <section id="contact" class="contact-wrap">
-        <div class="contact-oversize">Contact Me • Contact Me • Contact Me</div>
+        <div class="contact-oversize" id="bigContact">Contact Me • Contact Me • Contact Me</div>
         <footer class="footer container">
           <div class="contact-left">
             <div class="label">Email</div>
             <div class="info" data-key="email">hello@juanpablo.com</div>
-
             <div class="label">Phone</div>
             <div class="info" data-key="phone">+1 (201) 895-3801</div>
           </div>
