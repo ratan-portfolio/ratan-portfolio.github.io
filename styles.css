@@ -120,4 +120,55 @@ a{color:inherit}
   .card{width:92%;padding:18px}
   .device-mock{height:160px}
   .contact-oversize{font-size:64px}
+  /* ADMIN PANEL PAGE */
+#adminPanel {
+    width: 100%;
+    min-height: 100vh;
+    padding: 40px;
+    color: #fff;
+
+    background: radial-gradient(circle at center,
+        rgba(120, 0, 255, 0.3),
+        rgba(0, 0, 50, 1)
+    );
+
+    backdrop-filter: blur(40px);
+    animation: adminBgFloat 8s ease-in-out infinite alternate;
 }
+
+/* ADMIN CARDS / INPUT BOXES */
+.admin-box {
+    width: 100%;
+    max-width: 600px;
+    padding: 25px;
+    margin: 20px auto;
+    background: rgba(255, 255, 255, 0.10);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Save Button Style */
+.admin-save-btn {
+    background: linear-gradient(90deg, #7b2ff7, #00c6ff);
+    padding: 12px 20px;
+    border-radius: 10px;
+    color: #fff;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.4s;
+}
+.admin-save-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #7b2ff7;
+}
+
+/* BACKGROUND ANIMATION */
+@keyframes adminBgFloat {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+}
+
