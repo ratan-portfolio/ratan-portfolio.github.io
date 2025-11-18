@@ -1,15 +1,11 @@
-// admin.js - simple password gate + editor UI that saves to localStorage
-const ADMIN_PASSWORD = "Ratanmandal11@#"; // change if you want a different one
+// admin.js - password-protected editor that saves to localStorage
+const ADMIN_PASSWORD = "Ratanmandal11@#";
 
 const loginBox = document.getElementById('loginBox');
 const editor = document.getElementById('editor');
 const loginBtn = document.getElementById('loginBtn');
 const adminPass = document.getElementById('adminPass');
 
-function loadState(){ return JSON.parse(localStorage.getItem('portfolio_state') || "{}"); }
-function saveState(obj){ localStorage.setItem('portfolio_state', JSON.stringify(obj)); }
-
-// defaults must match app.js defaults if you want parity
 const defaults = {
   brandName: "Juan Pablo",
   navAbout: "About",
@@ -23,20 +19,17 @@ const defaults = {
   ctaText: "Send me your email to discuss a project",
   projects: [
     { tag: "UI/UX Design", title: "Crypts - Crypto Landing Page", text: "A modern responsive landing for a crypto product." },
-    { tag: "Branding", title: "Travel Experience", text: "Design and UI for travel agency." },
+    { tag: "Branding", title: "Travel Experience", text: "Design and UI for a travel brand." },
     { tag: "Web App", title: "Dashboard Pro", text: "Admin dashboard with charts & controls." }
   ]
 };
 
-function isLogged(){
-  return sessionStorage.getItem('admin_logged') === '1';
-}
+function loadState(){ return JSON.parse(localStorage.getItem('portfolio_state') || "null") || defaults; }
+function saveState(obj){ localStorage.setItem('portfolio_state', JSON.stringify(obj)); }
 
-function showEditor(){
-  loginBox.style.display = 'none';
-  editor.style.display = 'block';
-  populateForm();
-}
+// login
+function isLogged(){ return sessionStorage.getItem('admin_logged') === '1'; }
+function showEditor(){ loginBox.style.display='none'; editor.style.display='block'; populateForm(); }
 
 if(isLogged()) showEditor();
 
@@ -45,12 +38,10 @@ loginBtn.addEventListener('click', ()=>{
   if(val === ADMIN_PASSWORD){
     sessionStorage.setItem('admin_logged','1');
     showEditor();
-  } else {
-    alert('Password incorrect.');
-  }
+  } else alert('Password incorrect.');
 });
 
-// form elements
+// elements
 const f_brandName = document.getElementById('f_brandName');
 const f_heroTitle = document.getElementById('f_heroTitle');
 const f_heroDesc = document.getElementById('f_heroDesc');
@@ -62,7 +53,7 @@ const resetBtn = document.getElementById('resetBtn');
 const exportBtn = document.getElementById('exportBtn');
 
 function populateForm(){
-  const s = {...defaults, ...loadState()};
+  const s = loadState();
   f_brandName.value = s.brandName || '';
   f_heroTitle.value = s.heroTitle || '';
   f_heroDesc.value = s.heroDesc || '';
@@ -88,31 +79,26 @@ function renderProjectsEditor(projects){
     `;
     projectsList.appendChild(div);
   });
-  // wire listeners
-  projectsList.querySelectorAll('input,textarea').forEach(inp=>{
-    inp.addEventListener('input', ()=>{ /* no-op, read on save */ });
-  });
   projectsList.querySelectorAll('button[data-action]').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
+    btn.addEventListener('click', ()=>{
       const action = btn.getAttribute('data-action');
       const idx = Number(btn.getAttribute('data-idx'));
-      const cur = getCurrentState().projects || [];
+      const cur = loadState().projects || [];
       if(action === 'up' && idx>0){ [cur[idx-1], cur[idx]] = [cur[idx], cur[idx-1]]; }
       if(action === 'down' && idx < cur.length-1){ [cur[idx+1], cur[idx]] = [cur[idx], cur[idx+1]]; }
       if(action === 'del'){ cur.splice(idx,1); }
+      saveState({...loadState(), projects:cur});
       renderProjectsEditor(cur);
     });
   });
 }
 
 function getCurrentState(){
-  const projectsEls = projectsList.querySelectorAll('[data-idx]');
-  const projects = [];
-  const seen = new Set();
-  projectsEls.forEach(el=>{
+  const items = projectsList.querySelectorAll('[data-idx]');
+  const seen = new Set(); const projects = [];
+  items.forEach(el=>{
     const idx = el.getAttribute('data-idx');
-    if(seen.has(idx)) return;
-    seen.add(idx);
+    if(seen.has(idx)) return; seen.add(idx);
     const tagEl = projectsList.querySelector(`input[data-idx="${idx}"][data-field="tag"]`);
     const titleEl = projectsList.querySelector(`input[data-idx="${idx}"][data-field="title"]`);
     const textEl = projectsList.querySelector(`textarea[data-idx="${idx}"][data-field="text"]`);
@@ -130,7 +116,7 @@ function getCurrentState(){
 saveBtn.addEventListener('click', ()=>{
   const payload = {...loadState(), ...getCurrentState()};
   saveState(payload);
-  alert('Saved! Open the public page to see updates.');
+  alert('Saved! Open the public page and refresh to see updates.');
 });
 
 resetBtn.addEventListener('click', ()=>{
@@ -142,21 +128,17 @@ resetBtn.addEventListener('click', ()=>{
 
 exportBtn.addEventListener('click', ()=>{
   const data = JSON.stringify(loadState(), null, 2);
-  const blob = new Blob([data], {type: 'application/json'});
+  const blob = new Blob([data], {type:'application/json'});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'portfolio_state.json';
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
+  const a = document.createElement('a'); a.href = url; a.download = 'portfolio_state.json';
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 });
 
-// add project
 addProject.addEventListener('click', ()=>{
   const cur = loadState().projects || [];
-  cur.push({tag:'New', title:'New Project', text:'Project description...'});
+  cur.push({ tag:'New', title:'New Project', text:'Project description...' });
   saveState({...loadState(), projects:cur});
   renderProjectsEditor(cur);
 });
 
-// utility
 function escapeHtml(s){ return s ? s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') : ''; }
