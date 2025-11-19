@@ -3,75 +3,123 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Portfolio — Animated Replica</title>
+  <title>Portfolio — Your Name</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="bg-wrap">
-    <header class="nav container" id="siteHeader">
+  <!-- HEADER / NAV -->
+  <header class="site-header">
+    <div class="container header-row">
       <div class="brand">
-        <div class="logo">○</div>
-        <div class="brand-name" data-key="brandName">Juan Pablo</div>
+        <div class="logo">YN</div>
+        <div class="brand-name" data-key="brand">Your Name</div>
       </div>
-      <nav class="menu">
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#home" data-key="navHome">Home</a>
         <a href="#about" data-key="navAbout">About</a>
+        <a href="#skills" data-key="navSkills">Skills</a>
         <a href="#projects" data-key="navProjects">Projects</a>
         <a href="#contact" data-key="navContact">Contact</a>
+        <a id="resumeNavBtn" class="nav-cta" href="#" target="_blank">See Resume</a>
       </nav>
-      <div class="nav-actions">
-        <a class="admin-link" href="admin.html" title="Admin (you)">Admin</a>
+      <div class="actions">
+        <!-- OPEN ADMIN IN NEW TAB to avoid overlap -->
+        <button id="openAdmin" class="admin-btn">Admin</button>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <main>
-      <!-- HERO -->
-      <section class="hero container" id="heroSection">
-        <div class="hero-left">
-          <h1 class="hero-title" data-key="heroTitle">Collaboration &amp; Success is the Key</h1>
-          <p class="hero-sub" data-key="heroDesc">The success of the collaboration is my priority on every project I work on.</p>
-          <div class="hero-cta">
-            <a class="btn-primary" href="#contact" data-key="ctaBtn">Get in Touch</a>
+  <!-- MAIN: sections laid out like pages -->
+  <main>
+    <!-- HOME / HERO -->
+    <section id="home" class="hero container">
+      <div class="hero-left">
+        <h1 data-key="heroTitle">Hi — I'm Your Name</h1>
+        <p data-key="heroSubtitle">Frontend developer • UI/UX designer • Creative coder</p>
+        <div class="hero-ctas">
+          <a id="resumeBtn" class="btn primary" href="#" target="_blank">See Resume</a>
+          <a id="graphicsBtn" class="btn" href="#" target="_blank">View Graphics</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="profile-card">
+          <div class="profile-placeholder">Profile Image</div>
+          <div class="profile-meta">
+            <div class="meta-name" data-key="metaName">Ratan arya </div>
+            <div class="meta-role" data-key="metaRole">Digital Marketer </div>
           </div>
         </div>
-        <div class="hero-right" aria-hidden="true">
-          <div class="device-mock floating">
-            <div class="mock-screen">Project Image</div>
-          </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="about container">
+      <h2>About Me</h2>
+      <div class="about-grid">
+        <div class="about-left">
+          <p data-key="aboutText">I design and build accessible, performant websites. I enjoy clear UX and beautiful UI.</p>
         </div>
-      </section>
-
-      <!-- PROJECTS STACK -->
-      <section id="projects" class="projects container">
-        <div class="stack" id="projectStack" aria-live="polite">
-          <!-- JS will render layered cards here -->
+        <div class="about-right">
+          <ul class="personal-info">
+            <li><strong>Location:</strong> <span data-key="New Delhi, India">New Delhi, India</span></li>
+            <li><strong>Email:</strong> <span data-key="aryaratan38@gmail.com">aryaratan38@gmail.com</span></li>
+            <li><strong>Phone:</strong> <span data-key="+91 96088 30840">+91 96088 30840</span></li>
+            <li><strong>Availability:</strong> <span data-key="infoAvail">Open to work</span></li>
+          </ul>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- CONTACT with oversize typography -->
-      <section id="contact" class="contact-wrap">
-        <div class="contact-oversize" id="bigContact">Contact Me • Contact Me • Contact Me</div>
-        <footer class="footer container">
-          <div class="contact-left">
-            <div class="label">Email</div>
-            <div class="info" data-key="email">hello@juanpablo.com</div>
-            <div class="label">Phone</div>
-            <div class="info" data-key="phone">+1 (201) 895-3801</div>
-          </div>
+    <!-- SKILLS -->
+    <section id="skills" class="skills container">
+      <h2>Skills</h2>
+      <div class="skills-list" id="skillsList">
+        <!-- populated by script, editable in Admin -->
+      </div>
+    </section>
 
-          <div class="contact-right">
-            <div class="cta-text" data-key="ctaText">Send me your email to discuss a project</div>
-            <div class="email-cta">
-              <input type="email" id="ctaEmail" placeholder="Enter your email" />
-              <button id="ctaBtnInline" aria-label="send email">➜</button>
-            </div>
-          </div>
-        </footer>
-      </section>
-    </main>
+    <!-- PROJECTS -->
+    <section id="projects" class="projects container">
+      <h2>Projects</h2>
+      <div id="projectsGrid" class="projects-grid">
+        <!-- projects rendered by script -->
+      </div>
+    </section>
 
-    <div class="credits">© <span id="year"></span> — <span data-key="brandNameCopy">Juan Pablo</span></div>
-  </div>
+    <!-- CONTACT -->
+    <section id="contact" class="contact container">
+      <h2>Contact</h2>
+      <p data-key="contactText">Interested in working together? Drop a message.</p>
+      <form id="contactForm" class="contact-form" onsubmit="return false;">
+        <input id="contactName" type="text" placeholder="Your name" />
+        <input id="contactEmail" type="email" placeholder="Your email" />
+        <textarea id="contactMessage" placeholder="Message"></textarea>
+        <button id="contactSend" class="btn primary">Send Message</button>
+      </form>
+    </section>
+  </main>
 
-  <script src="app.js"></script>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <div>© <span id="year"></span> <span data-key="brandCopy">Ratan arya </span></div>
+      <div><small data-key="footerNote">Built with care •</small></div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+
+  <script>
+    // Open admin.html in a new tab — avoids overlay overlap
+    document.getElementById('openAdmin').addEventListener('click', function () {
+      window.open('admin.html', '_blank');
+    });
+  </script>
 </body>
 </html>
+
+
+
+
+
+
