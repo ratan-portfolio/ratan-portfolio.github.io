@@ -3,66 +3,240 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Portfolio Editor</title>
+  <title>Portfolio Admin</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    .admin-wrap{max-width:980px;margin:36px auto;padding:24px;background:rgba(255,255,255,0.03);border-radius:12px}
-    .admin-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
-    label{min-width:140px;color:#fff;opacity:.9}
-    input[type="text"], textarea, select{flex:1;padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.04);color:#fff}
-    .btn{padding:10px 14px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;cursor:pointer}
-    .danger{background:transparent;border:1px solid rgba(255,255,255,0.12)}
-    .projects-editor{margin-top:12px}
-    .project-item{padding:12px;border-radius:10px;background:rgba(0,0,0,0.06);margin-bottom:10px}
+    /* small admin tweaks to keep panel compact inside admin.html */
+    body{background:#0b0b10;color:var(--muted);padding:20px}
+    .wrap{max-width:1000px;margin:20px auto}
+    .admin-box{background:rgba(0,0,0,0.12);padding:12px;border-radius:10px;margin-top:10px}
+    .admin-head{display:flex;justify-content:space-between;align-items:center}
+    .btn{padding:8px 10px;border-radius:8px;border:0;cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff}
+    input,textarea{width:100%;padding:8px;border-radius:6px;border:0;background:rgba(255,255,255,0.03);color:var(--muted)}
+    .small-row{display:flex;gap:8px;align-items:center}
   </style>
 </head>
 <body>
-  <div style="padding:18px;color:#fff">
-    <div class="admin-wrap">
-      <h2>Admin — Portfolio Editor</h2>
-      <div id="loginBox">
-        <p>Enter admin password to continue.</p>
-        <div class="admin-row">
-          <input id="adminPass" type="password" placeholder="Password" />
-          <button id="loginBtn" class="btn">Login</button>
-        </div>
-        <div style="opacity:.8;font-size:13px">Hint: password is the one you provided earlier.</div>
+  <div class="wrap">
+    <div class="admin-head">
+      <h2>Admin Editor</h2>
+      <div><a href="index.html" class="btn">Open Site</a></div>
+    </div>
+
+    <div id="loginArea" class="admin-box">
+      <label>Enter Admin Password</label>
+      <input id="adminPass" type="password" placeholder="Password" />
+      <div style="margin-top:8px">
+        <button id="loginBtn" class="btn primary">Login</button>
+      </div>
+      <p style="opacity:.8;margin-top:8px">Default password: <code>errorcode500</code></p>
+    </div>
+
+    <div id="editorArea" style="display:none">
+      <div class="admin-box">
+        <h3>Site Content</h3>
+        <label>Brand / Name</label>
+        <input id="fldBrand" type="text" />
+
+        <label style="margin-top:8px">Hero Title</label>
+        <input id="fldHeroTitle" type="text" />
+
+        <label style="margin-top:8px">Hero Subtitle</label>
+        <textarea id="fldHeroSubtitle"></textarea>
+
+        <label style="margin-top:8px">Resume Link (Google Drive)</label>
+        <input id="fldResumeLink" type="text" placeholder="https://drive.google.com/..." />
+
+        <label style="margin-top:8px">Graphics Folder Link</label>
+        <input id="fldGraphicsLink" type="text" placeholder="https://drive.google.com/..." />
       </div>
 
-      <div id="editor" style="display:none">
-        <div class="admin-row">
-          <label>Brand name</label><input id="f_brandName" type="text" />
-        </div>
-        <div class="admin-row">
-          <label>Hero title</label><input id="f_heroTitle" type="text" />
-        </div>
-        <div class="admin-row">
-          <label>Hero description</label><input id="f_heroDesc" type="text" />
-        </div>
-        <div class="admin-row">
-          <label>CTA button text</label><input id="f_ctaBtn" type="text" />
-        </div>
-
-        <div class="projects-editor">
-          <h3>Projects</h3>
-          <div id="projectsList"></div>
-          <button id="addProject" class="btn">+ Add Project</button>
-        </div>
-
-        <div style="margin-top:18px;display:flex;gap:8px">
-          <button id="saveBtn" class="btn">Save</button>
-          <button id="exportBtn" class="btn">Export JSON</button>
-          <button id="resetBtn" class="btn danger">Reset Defaults</button>
-        </div>
-
-        <div style="margin-top:16px;color:rgba(255,255,255,0.75)">
-          <p><strong>Notes:</strong> Save stores changes to your browser's localStorage. To make changes permanent on GitHub, download exported JSON and update the app.js defaults or push changes to repo.</p>
-        </div>
+      <div class="admin-box">
+        <h4>Projects (edit / reorder)</h4>
+        <div id="projectsEditor"></div>
+        <div style="margin-top:8px"><button id="addProject" class="btn">+ Add Project</button></div>
       </div>
 
+      <div class="admin-box">
+        <h4>Skills</h4>
+        <div id="skillsEditor"></div>
+        <div style="margin-top:8px"><button id="addSkill" class="btn">+ Add Skill</button></div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button id="saveAdmin" class="btn primary">Save (local)</button>
+        <button id="exportAdmin" class="btn">Export JSON</button>
+        <button id="resetAdmin" class="btn">Reset</button>
+      </div>
+
+      <p style="opacity:.8;margin-top:10px">Saved in your browser (localStorage). Use Export to update repo defaults.</p>
     </div>
   </div>
 
-  <script src="admin.js"></script>
+  <script>
+  // Admin page JS (standalone) - uses same keys as index/script.js
+  const DEFAULTS = {
+    brand: "Your Name",
+    heroTitle: "Hi — I'm Your Name",
+    heroSubtitle: "Frontend developer • UI/UX designer • Creative coder",
+    resumeLink: "#",
+    graphicsLink: "#",
+    aboutText: "I design and build accessible, performant websites.",
+    infoLocation: "City, Country",
+    infoEmail: "hello@example.com",
+    infoPhone: "+91 98765 43210",
+    contactText: "Interested in working together? Drop a message.",
+    skills: [
+      {name:"HTML",level:85},
+      {name:"CSS",level:80},
+      {name:"JavaScript",level:70},
+      {name:"React",level:65}
+    ],
+    projects: [
+      { tag:"UI/UX", title:"Project A", text:"Short description", link:"#"},
+      { tag:"Web", title:"Project B", text:"Short description", link:"#"},
+      { tag:"Branding", title:"Project C", text:"Short description", link:"#"}
+    ],
+    footerNote: "Built with care • Editable"
+  };
+  const ADMIN_PASS = "Ratanmandal11@#";
+
+  function loadState(){ try{ return JSON.parse(localStorage.getItem('portfolio_state')) || DEFAULTS } catch(e){ return DEFAULTS } }
+  function saveState(obj){ localStorage.setItem('portfolio_state', JSON.stringify(obj)) }
+
+  let state = loadState();
+
+  // login flow
+  const loginBtn = document.getElementById('loginBtn');
+  loginBtn.addEventListener('click', ()=> {
+    const pass = document.getElementById('adminPass').value.trim();
+    if(pass === ADMIN_PASS){
+      document.getElementById('loginArea').style.display = 'none';
+      document.getElementById('editorArea').style.display = 'block';
+      populateAdmin();
+    } else {
+      alert('Password incorrect');
+    }
+  });
+
+  function populateAdmin(){
+    document.getElementById('fldBrand').value = state.brand || DEFAULTS.brand;
+    document.getElementById('fldHeroTitle').value = state.heroTitle || DEFAULTS.heroTitle;
+    document.getElementById('fldHeroSubtitle').value = state.heroSubtitle || DEFAULTS.heroSubtitle;
+    document.getElementById('fldResumeLink').value = state.resumeLink || DEFAULTS.resumeLink;
+    document.getElementById('fldGraphicsLink').value = state.graphicsLink || DEFAULTS.graphicsLink;
+    renderProjectsEditor();
+    renderSkillsEditor();
+  }
+
+  function escapeHtml(s){ return (s||'').toString().replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+  /* projects editor */
+  function renderProjectsEditor(){
+    const ed = document.getElementById('projectsEditor'); ed.innerHTML = '';
+    (state.projects||[]).forEach((p, idx)=>{
+      const wrap = document.createElement('div'); wrap.className='admin-box'; wrap.style.marginBottom='8px';
+      wrap.innerHTML = `
+        <input data-idx="${idx}" data-field="tag" value="${escapeHtml(p.tag)}" style="width:120px;padding:6px;margin-right:6px" />
+        <input data-idx="${idx}" data-field="title" value="${escapeHtml(p.title)}" style="width:260px;padding:6px;margin-right:6px" />
+        <input data-idx="${idx}" data-field="link" value="${escapeHtml(p.link||'')}" style="width:220px;padding:6px" />
+        <div style="margin-top:6px"><textarea data-idx="${idx}" data-field="text" style="width:100%;padding:8px">${escapeHtml(p.text)}</textarea></div>
+        <div style="margin-top:6px;display:flex;gap:6px">
+          <button data-action="up" data-idx="${idx}" class="btn">↑</button>
+          <button data-action="down" data-idx="${idx}" class="btn">↓</button>
+          <button data-action="del" data-idx="${idx}" class="btn">Delete</button>
+        </div>
+      `;
+      ed.appendChild(wrap);
+    });
+    ed.querySelectorAll('button[data-action]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const act = b.getAttribute('data-action'), i = Number(b.getAttribute('data-idx'));
+        const arr = state.projects || [];
+        if(act==='up' && i>0){ [arr[i-1],arr[i]] = [arr[i],arr[i-1]]; }
+        if(act==='down' && i < arr.length-1){ [arr[i+1],arr[i]] = [arr[i],arr[i+1]]; }
+        if(act==='del'){ arr.splice(i,1); }
+        saveState(state); renderProjectsEditor();
+      });
+    });
+  }
+
+  document.getElementById('addProject').addEventListener('click', ()=> {
+    state.projects = state.projects || []; state.projects.push({tag:'New',title:'New Project',text:'Describe here',link:'#'});
+    saveState(state); renderProjectsEditor();
+  });
+
+  /* skills editor */
+  function renderSkillsEditor(){
+    const ed = document.getElementById('skillsEditor'); ed.innerHTML='';
+    (state.skills||[]).forEach((s,idx)=>{
+      const wrap = document.createElement('div'); wrap.className='admin-box'; wrap.style.marginBottom='8px';
+      wrap.innerHTML = `<input data-idx="${idx}" data-field="name" value="${escapeHtml(s.name)}" style="width:60%;padding:6px;margin-right:6px"/><input data-idx="${idx}" data-field="level" value="${s.level}" style="width:80px;padding:6px"/><div style="margin-top:6px"><button data-action="delSkill" data-idx="${idx}" class="btn">Delete</button></div>`;
+      ed.appendChild(wrap);
+    });
+    ed.querySelectorAll('button[data-action]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const act = b.getAttribute('data-action'), i = Number(b.getAttribute('data-idx'));
+        if(act==='delSkill'){ state.skills.splice(i,1); saveState(state); renderSkillsEditor(); }
+      });
+    });
+  }
+  document.getElementById('addSkill').addEventListener('click', ()=> {
+    state.skills = state.skills || []; state.skills.push({name:'New',level:50}); saveState(state); renderSkillsEditor();
+  });
+
+  /* save admin */
+  document.getElementById('saveAdmin').addEventListener('click', ()=>{
+    state.brand = document.getElementById('fldBrand').value.trim() || DEFAULTS.brand;
+    state.heroTitle = document.getElementById('fldHeroTitle').value.trim() || DEFAULTS.heroTitle;
+    state.heroSubtitle = document.getElementById('fldHeroSubtitle').value.trim() || DEFAULTS.heroSubtitle;
+    state.resumeLink = document.getElementById('fldResumeLink').value.trim() || DEFAULTS.resumeLink;
+    state.graphicsLink = document.getElementById('fldGraphicsLink').value.trim() || DEFAULTS.graphicsLink;
+
+    // read project editor values into state.projects
+    const pEd = document.getElementById('projectsEditor');
+    const projectEls = pEd.querySelectorAll('[data-idx]');
+    const seen = new Set(); const newProjects = [];
+    projectEls.forEach(el=>{
+      const idx = el.getAttribute('data-idx');
+      if(seen.has(idx)) return; seen.add(idx);
+      const tag = pEd.querySelector(`input[data-idx="${idx}"][data-field="tag"]`)?.value || '';
+      const title = pEd.querySelector(`input[data-idx="${idx}"][data-field="title"]`)?.value || '';
+      const link = pEd.querySelector(`input[data-idx="${idx}"][data-field="link"]`)?.value || '#';
+      const text = pEd.querySelector(`textarea[data-idx="${idx}"][data-field="text"]`)?.value || '';
+      newProjects.push({tag,title,link,text});
+    });
+    state.projects = newProjects;
+
+    // skills
+    const sEd = document.getElementById('skillsEditor');
+    const skillEls = sEd.querySelectorAll('[data-idx]');
+    const seenS = new Set(); const newSkills = [];
+    skillEls.forEach(el=>{
+      const idx = el.getAttribute('data-idx');
+      if(seenS.has(idx)) return; seenS.add(idx);
+      const name = sEd.querySelector(`input[data-idx="${idx}"][data-field="name"]`)?.value || 'New';
+      const level = Number(sEd.querySelector(`input[data-idx="${idx}"][data-field="level"]`)?.value || 50);
+      newSkills.push({name,level});
+    });
+    state.skills = newSkills;
+
+    saveState(state);
+    alert('Saved locally. Close this tab or switch back to the site and refresh to see changes.');
+  });
+
+  /* export */
+  document.getElementById('exportAdmin').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'portfolio_state.json'; a.click(); a.remove(); URL.revokeObjectURL(url);
+  });
+
+  /* reset */
+  document.getElementById('resetAdmin').addEventListener('click', ()=>{
+    if(!confirm('Reset to defaults?')) return;
+    state = JSON.parse(JSON.stringify(DEFAULTS)); saveState(state); renderProjectsEditor(); renderSkillsEditor(); alert('Reset done.');
+  });
+  </script>
 </body>
 </html>
