@@ -153,7 +153,7 @@ a{color:inherit}
     background: linear-gradient(90deg, #7b2ff7, #00c6ff);
     padding: 12px 20px;
     border-radius: 10px;
-    color: #fff;
+    color: #000;
     border: none;
     font-size: 16px;
     cursor: pointer;
@@ -171,4 +171,5 @@ a{color:inherit}
 }
 
 }
+
 
