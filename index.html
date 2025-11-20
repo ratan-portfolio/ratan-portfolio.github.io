@@ -7,14 +7,17 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- HEADER / NAV -->
+
+  <!-- HEADER -->
   <header class="site-header">
     <div class="container header-row">
+
       <div class="brand">
         <div class="logo">YN</div>
         <div class="brand-name" data-key="brand">Ratan arya</div>
       </div>
-      <nav class="site-nav" aria-label="Main navigation">
+
+      <nav class="site-nav">
         <a href="#home" data-key="navHome">Home</a>
         <a href="#about" data-key="navAbout">About</a>
         <a href="#skills" data-key="navSkills">Skills</a>
@@ -22,49 +25,60 @@
         <a href="#contact" data-key="navContact">Contact</a>
         <a id="resumeNavBtn" class="nav-cta" href="#" target="_blank">See Resume</a>
       </nav>
+
       <div class="actions">
-        <!-- OPEN ADMIN IN NEW TAB to avoid overlap -->
         <button id="openAdmin" class="admin-btn">Admin</button>
       </div>
+
     </div>
   </header>
 
-  <!-- MAIN: sections laid out like pages -->
+  <!-- MAIN -->
   <main>
-    <!-- HOME / HERO -->
+
+    <!-- HERO SECTION -->
     <section id="home" class="hero container">
+
       <div class="hero-left">
         <h1 data-key="heroTitle">Hi — I’m Ratan Arya</h1>
         <p data-key="heroSubtitle">A Digital Marketer who creates simple, clean, and result-focused strategies.
 I run ads, design creatives, and help brands grow online.r</p>
+
         <div class="hero-ctas">
           <a id="resumeBtn" class="btn primary" href="#" target="_blank">See Resume</a>
           <a id="graphicsBtn" class="btn" href="#" target="_blank">View Graphics</a>
         </div>
       </div>
+
       <div class="hero-right">
-  <div class="profile-card">
-    <div class="profile-placeholder"></div>
-    <div class="profile-meta">
-      <div class="meta-name" data-key="metaName">Ratan arya</div>
-      <div class="meta-role" data-key="metaRole">Digital Marketer</div>
-    </div>
-  </div>
-</div>
-</div>
+        <div class="profile-card">
+          <div class="profile-placeholder"></div>
+          <div class="profile-meta">
+            <div class="meta-name" data-key="metaName">Ratan arya</div>
+            <div class="meta-role" data-key="metaRole">Digital Marketer</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
 
 
-    <!-- ABOUT -->
+    <!-- ABOUT SECTION -->
     <section id="about" class="about container">
       <h2>About Me</h2>
+
       <div class="about-grid">
+
         <div class="about-left">
           <p data-key="I am a Digital Marketer with 3+ years of experience in running ads and creating eye-catching marketing creatives.
 I help brands grow faster using smart strategies, clean designs, and performance-focused campaigns.
-From creating perfect ad visuals to setting up high-converting campaigns, I make sure every brand gets real, measurable results.">I am a Digital Marketer with 3+ years of experience in running ads and creating eye-catching marketing creatives.
+From creating perfect ad visuals to setting up high-converting campaigns, I make sure every brand gets real, measurable results.">
+I am a Digital Marketer with 3+ years of experience in running ads and creating eye-catching marketing creatives.
 I help brands grow faster using smart strategies, clean designs, and performance-focused campaigns.
-From creating perfect ad visuals to setting up high-converting campaigns, I make sure every brand gets real, measurable results.</p>
+From creating perfect ad visuals to setting up high-converting campaigns, I make sure every brand gets real, measurable results.
+          </p>
         </div>
+
         <div class="about-right">
           <ul class="personal-info">
             <li><strong>Location:</strong> <span data-key="New Delhi, India">New Delhi, India</span></li>
@@ -73,42 +87,43 @@ From creating perfect ad visuals to setting up high-converting campaigns, I make
             <li><strong>Availability:</strong> <span data-key="infoAvail">Open to work</span></li>
           </ul>
         </div>
+
       </div>
     </section>
+
 
     <!-- SKILLS -->
     <section id="skills" class="skills container">
       <h2>Skills</h2>
-      <div class="skills-list" id="skillsList">
-        <!-- populated by script, editable in Admin -->
-      </div>
+      <div class="skills-list" id="skillsList"></div>
     </section>
 
     <!-- PROJECTS -->
     <section id="projects" class="projects container">
       <h2>Projects</h2>
-      <div id="projectsGrid" class="projects-grid">
-        <!-- projects rendered by script -->
-      </div>
+      <div id="projectsGrid" class="projects-grid"></div>
     </section>
 
     <!-- CONTACT -->
     <section id="contact" class="contact container">
       <h2>Contact</h2>
       <p data-key="contactText">Interested in working together? Drop a message.</p>
+
       <form id="contactForm" class="contact-form" onsubmit="return false;">
         <input id="contactName" type="text" placeholder="Your name" />
         <input id="contactEmail" type="email" placeholder="Your email" />
         <textarea id="contactMessage" placeholder="Message"></textarea>
         <button id="contactSend" class="btn primary">Send Message</button>
       </form>
+
     </section>
+
   </main>
 
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container footer-row">
-      <div>© <span id="year"></span> <span data-key="brandCopy">Ratan arya </span></div>
+      <div>© <span id="year"></span> <span data-key="brandCopy">Ratan arya</span></div>
       <div><small data-key="footerNote">Built with care •</small></div>
     </div>
   </footer>
@@ -116,23 +131,10 @@ From creating perfect ad visuals to setting up high-converting campaigns, I make
   <script src="script.js"></script>
 
   <script>
-    // Open admin.html in a new tab — avoids overlay overlap
     document.getElementById('openAdmin').addEventListener('click', function () {
       window.open('admin.html', '_blank');
     });
   </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
