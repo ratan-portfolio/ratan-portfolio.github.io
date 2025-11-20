@@ -5,7 +5,9 @@ const DEFAULTS = {
   heroSubtitle: "Frontend developer • UI/UX designer • Creative coder",
   resumeLink: "#",
   graphicsLink: "#",
-  aboutText: "I design and build accessible, performant websites.",
+  aboutText: "I am a Digital Marketer with 3+ years of experience in running ads and creating eye-catching marketing creatives.
+I help brands grow faster using smart strategies, clean designs, and performance-focused campaigns.
+From creating perfect ad visuals to setting up high-converting campaigns, I make sure every brand gets real, measurable results..",
   infoLocation: "City, Country",
   infoEmail: "hello@example.com",
   infoPhone: "+91 98765 43210",
